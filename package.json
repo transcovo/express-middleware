@@ -1,0 +1,38 @@
+{
+  "name": "express-middlewares",
+  "version": "1.0.0",
+  "description": "Set of common middlewares for Chauffeur-Privé",
+  "main": "index.js",
+  "dependencies": {
+    "morgan": "^1.7.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "co-mocha": "^1.1.2",
+    "coveralls": "^2.11.6",
+    "eslint": "^1.10.3",
+    "eslint-config-cp": "transcovo/eslint-config-cp#1.1.0",
+    "istanbul": "^0.4.2",
+    "mocha": "^2.4.5",
+    "mocha-lcov-reporter": "^1.0.0",
+    "sinon": "^1.17.3"
+  },
+  "scripts": {
+    "test": "npm run lint && npm run coverage",
+    "lint": "eslint .",
+    "start": "nodemon server/index.js | node_modules/.bin/bunyan",
+    "coverage": "istanbul cover _mocha --report lcovonly -- --recursive -R spec",
+    "coverage-html": "istanbul cover _mocha -- --recursive -R spec",
+    "mocha": "mocha --recursive"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/transcovo/express-middlewares.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/transcovo/express-middlewares/issues"
+  },
+  "homepage": "https://github.com/transcovo/express-middlewares#readme"
+}
