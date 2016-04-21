@@ -1,7 +1,7 @@
 {
   "name": "express-middleware",
   "version": "1.0.0",
-  "description": "Set of common middlewares for Chauffeur-Privé",
+  "description": "Set of middlewares for Chauffeur-Privé",
   "main": "index.js",
   "dependencies": {
     "bunyan": "~1.8.0",
@@ -21,7 +21,7 @@
   "scripts": {
     "test": "npm run lint && npm run coverage",
     "lint": "eslint .",
-    "start": "nodemon server/index.js | node_modules/.bin/bunyan",
+    "start": "nodemon server/index.js | bunyan",
     "coverage": "istanbul cover _mocha --report lcovonly -- --recursive -R spec",
     "coverage-html": "istanbul cover _mocha -- --recursive -R spec",
     "mocha": "mocha --recursive"
@@ -30,10 +30,14 @@
     "type": "git",
     "url": "git+https://github.com/transcovo/express-middlewares.git"
   },
-  "author": "",
-  "license": "ISC",
+  "engines": {
+    "node": ">=4.2.2",
+    "npm": ">=2.14.7"
+  },
   "bugs": {
     "url": "https://github.com/transcovo/express-middlewares/issues"
   },
-  "homepage": "https://github.com/transcovo/express-middlewares#readme"
+  "homepage": "https://github.com/transcovo/express-middlewares#readme",
+  "author": "Chauffeur-Privé",
+  "license": "Apache-2.0"
 }
