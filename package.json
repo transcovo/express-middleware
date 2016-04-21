@@ -1,22 +1,22 @@
 {
-  "name": "express-middlewares",
-  "version": "1.0.0",
+  "name": "express-middleware",
+  "version": "0.0.1",
   "description": "Set of common middlewares for Chauffeur-Privé",
   "main": "index.js",
   "dependencies": {
-    "bunyan": "^1.8.0",
-    "morgan": "^1.7.0"
+    "bunyan": "~1.8.0",
+    "morgan": "~1.7.0"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
-    "co-mocha": "^1.1.2",
-    "coveralls": "^2.11.6",
-    "eslint": "^1.10.3",
+    "chai": "~3.5.0",
+    "co-mocha": "~1.1.2",
+    "coveralls": "~2.11.6",
+    "eslint": "~1.10.3",
     "eslint-config-cp": "transcovo/eslint-config-cp#1.1.0",
-    "istanbul": "^0.4.2",
-    "mocha": "^2.4.5",
-    "mocha-lcov-reporter": "^1.0.0",
-    "sinon": "^1.17.3"
+    "istanbul": "~0.4.2",
+    "mocha": "~2.4.5",
+    "mocha-lcov-reporter": "~1.0.0",
+    "sinon": "~1.17.3"
   },
   "scripts": {
     "test": "npm run lint && npm run coverage",
