@@ -1,5 +1,3 @@
-# Express middlewares for the Chauffeur-Privé microservices
-
 [![Coverage Status](https://coveralls.io/repos/github/transcovo/express-middleware/badge.svg?branch=master)](https://coveralls.io/github/transcovo/express-middleware?branch=master)
 [![Circle CI](https://circleci.com/gh/transcovo/express-middleware/tree/master.svg?style=svg&circle-token=97907b31816956c5736f058b30d8ef31ea0f0eaf)](https://circleci.com/gh/transcovo/express-middleware/tree/master)
 
@@ -12,6 +10,19 @@ npm i express-middleware --save
 
 - **Available**: Request Id, Child logger, JWT Token and HTTP Access logger
 - **Todo**: JWT decoder, Error handler, ...
+
+### SSL Redirect
+
+Force SSL redirection. Options object is optional. Two possibilities to disable redirection :
+- set environment variable DISABLE_SSL_REDIRECT to `true`
+- add `disable`to `true` in setup options.
+
+```js
+const sslRedirect = require('express-middlewares').sslRedirect;
+app.use(sslRedirect(options));
+```
+
+**Middleware dependency** : _None_
 
 ### Request Id
 
