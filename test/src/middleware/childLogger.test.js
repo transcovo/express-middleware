@@ -3,7 +3,7 @@
 
 const expect = require('chai').expect;
 const sinon = require('sinon');
-const childLogger = require('../../../src/middlewares/childLogger.js');
+const childLogger = require('../../../src/middleware/childLogger.js');
 
 describe('child logger middleware - childLogger.js', function root() {
   it('should throw assertion error when logger is missing', function test() {

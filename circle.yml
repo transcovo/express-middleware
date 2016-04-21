@@ -2,8 +2,6 @@
 machine:
   node:
     version: 5.10.1
-  environment:
-    COVERALLS_REPO_TOKEN: 0Uv2TM1armtyO2ZtpKnTElS7tBbciHJT4
 
 general:
   artifacts:

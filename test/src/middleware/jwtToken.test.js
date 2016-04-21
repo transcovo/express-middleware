@@ -2,7 +2,7 @@
 /* eslint no-unused-expressions:0 */
 
 const expect = require('chai').expect;
-const jwtToken = require('../../../src/middlewares/jwtToken.js');
+const jwtToken = require('../../../src/middleware/jwtToken.js');
 
 describe('jwt token middleware - jwtToken.js', function root() {
   it('should correctly created and called without token', function test(done) {

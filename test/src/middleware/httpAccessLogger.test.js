@@ -2,7 +2,7 @@
 /* eslint no-unused-expressions:0 */
 
 const expect = require('chai').expect;
-const httpAccessLogger = require('../../../src/middlewares/httpAccessLogger.js');
+const httpAccessLogger = require('../../../src/middleware/httpAccessLogger.js');
 
 describe('http access logger middleware - httpAccessLogger.js', function root() {
   it('should work in normal mode', function test(done) {

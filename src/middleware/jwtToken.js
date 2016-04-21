@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = config;
+module.exports = setup;
 
 // // //
 
@@ -8,7 +8,7 @@ module.exports = config;
  * Add request token as `token` to req object
  * @return {Function} middleware
  */
-function config() {
+function setup() {
   /**
    * Middleware
    * @param  {Object}   req  Express request
@@ -18,10 +18,18 @@ function config() {
    */
   return function middleware(req, res, next) {
     const header = req.get('authorization');
-    if (header && header.split(' ')[0] === 'Bearer') {
-      req.token = header.split(' ')[1];
-    } else if (req.query && req.query.token) {
+
+    if (req.query && req.query.token) {
       req.token = req.query.token;
+      return next();
+    }
+
+    if (header) {
+      const parts = header.split(' ');
+      if (parts[0] === 'Bearer') {
+        req.token = parts[1];
+        return next();
+      }
     }
     next();
   };

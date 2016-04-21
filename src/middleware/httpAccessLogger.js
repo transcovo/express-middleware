@@ -11,32 +11,29 @@ setup._authorizationToken = authorizationToken; // for testing
 // // //
 
 /**
- * @param  {Object} opts Options
- * @param  {Object} opts.morgan See Morgan options
- * @param  {Function(req)} opts.info  A function which return a method to log a message (by default Bunyan `req.logger` logger is used)
- * @param  {Function(req)} opts.isDebug  Allow to display more information whether true (by default Bunyan `req.logger` logger is used)
- * @param  {Object} opts.tokens  Additionnal Morgan tokens
- * @param  {Function(req, res)} opts.tokens.authorization This token displays the request jwt token by using `req.token`
- * @param  {Function(req, res)} opts.tokens.request-id  This token displays the request unique id : `req.requestId`
- * @see childLogger.js
- * @see jwtToken.js
- * @see requestId.js
- */
-/**
   * Create a logger for http request Morgan-based.
   * Morgan is a good tools to fetch request data (like duration, http version, ...), but it only streams string instead of Json.
   * Then we don't use morgan stream and override morgan formatter to log Json request data.
   *
  * @param  {Object} opts Options
+ * @param  {Object} opts.morgan See Morgan options
+ * @param  {Function} opts.info  A function which return a method to log a message (by default Bunyan `req.logger` logger is used)
+ * @param  {Function} opts.isDebug  Allow to display more information whether true (by default Bunyan `req.logger` logger is used)
+ * @param  {Object} opts.tokens  Additionnal Morgan tokens
+ * @param  {Function} opts.tokens.authorization This token displays the request jwt token by using `req.token`
+ * @param  {Function} opts.tokens.request-id  This token displays the request unique id : `req.requestId`
  * @return {Function}      the middleware
+ * @see childLogger.js
+ * @see jwtToken.js
+ * @see requestId.js
  */
 function setup(opts) {
   const options = _.defaults({
     morgan: {
       stream: { write: () => { /* DO NOTHING */ } }
     },
-    log: (req) => req.logger.info.bind(req.logger),
-    isDebug: (req) => req.logger.level() < bunyan.INFO,
+    log: req => req.logger.info.bind(req.logger),
+    isDebug: req => req.logger.level() < bunyan.INFO,
     tokens: {
       'request-id': req => req.requestId,
       authorization: authorizationToken

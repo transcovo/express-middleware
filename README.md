@@ -1,17 +1,17 @@
 # Express middlewares for the Chauffeur-Privé microservices
 
-[![Coverage Status](https://coveralls.io/repos/github/transcovo/express-middlewares/badge.svg?branch=master)](https://coveralls.io/github/transcovo/express-middlewares?branch=master)
-[![Circle CI](https://circleci.com/gh/transcovo/express-middlewares.svg?style=svg&circle-token=97907b31816956c5736f058b30d8ef31ea0f0eaf)](https://circleci.com/gh/transcovo/express-middlewares)
+[![Coverage Status](https://coveralls.io/repos/github/transcovo/express-middleware/badge.svg?branch=master)](https://coveralls.io/github/transcovo/express-middleware?branch=master)
+[![Circle CI](https://circleci.com/gh/transcovo/express-middleware/tree/master.svg?style=svg&circle-token=97907b31816956c5736f058b30d8ef31ea0f0eaf)](https://circleci.com/gh/transcovo/express-middleware/tree/master)
 
 ## Install
 
 ```sh
-npm i express-middlewares --save
+npm i express-middleware --save
 ```
 ## Middlewares
 
-- *Available*: Request Id, Child logger, JWT Token and HTTP Access logger
-- *Todo*: JWT decoder, ...
+- **Available**: Request Id, Child logger, JWT Token and HTTP Access logger
+- **Todo**: JWT decoder, Error handler, ...
 
 ### Request Id
 
@@ -22,6 +22,8 @@ const requestId = require('express-middlewares').requestId;
 app.use(requestId());
 ```
 
+**Middleware dependency** : _None_
+
 ### Child logger
 
 Create a child logger and append it to the `req` object. Logger must be a bunyan instance (with the method `child`).
@@ -30,6 +32,8 @@ Create a child logger and append it to the `req` object. Logger must be a bunyan
 const childLogger = require('express-middlewares').childLogger;
 app.use(childLogger(logger));
 ```
+
+**Middleware dependency** : Request Id (optional)
 
 ### JWT Token
 
@@ -42,6 +46,8 @@ const jwtToken = require('express-middlewares').jwtToken;
 app.use(jwtToken(logger));
 ```
 
+**Middleware dependency** : _None_
+
 ### HTTP Access logger
 
 Log http access properties for each request (like Apache httpd) in JSON format.
@@ -50,6 +56,8 @@ Log http access properties for each request (like Apache httpd) in JSON format.
 const httpAccessLogger = require('express-middlewares').httpAccessLogger;
 app.use(httpAccessLogger(opts));
 ```
+
+**Middleware dependency** : Child logger (optional if options are overridden), Request Id (optional), JWT Token (optional)
 
 ## Contribute
 

@@ -2,7 +2,7 @@
 
 const uuid = require('node-uuid');
 
-module.exports = config;
+module.exports = setup;
 
 // // //
 
@@ -10,7 +10,7 @@ module.exports = config;
  * When the id in request url is equal to 'me', then the id is replaced by the authenticated user's id
  * @return {Function} middleware
  */
-function config() {
+function setup() {
   /**
    * Middleware
    * @param  {Object}   req  Express request

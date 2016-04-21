@@ -3,7 +3,7 @@
 
 const expect = require('chai').expect;
 const sinon = require('sinon');
-const requestId = require('../../../src/middlewares/requestId.js');
+const requestId = require('../../../src/middleware/requestId.js');
 
 describe('request id middleware - requestId.js', function root() {
   it('should correctly created and called', function test(done) {

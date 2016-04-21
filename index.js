@@ -1,9 +1,9 @@
 'use strict';
 
-const childLogger = require('./src/middlewares/childLogger');
-const requestId = require('./src/middlewares/requestId');
-const httpAccessLogger = require('./src/middlewares/httpAccessLogger');
-const jwtToken = require('./src/middlewares/jwtToken');
+const childLogger = require('./src/middleware/childLogger');
+const requestId = require('./src/middleware/requestId');
+const httpAccessLogger = require('./src/middleware/httpAccessLogger');
+const jwtToken = require('./src/middleware/jwtToken');
 
 module.exports = {
   childLogger,
