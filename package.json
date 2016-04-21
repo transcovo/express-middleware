@@ -1,6 +1,6 @@
 {
   "name": "express-middleware",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Set of common middlewares for Chauffeur-Privé",
   "main": "index.js",
   "dependencies": {
