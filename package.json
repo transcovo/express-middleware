@@ -2,6 +2,11 @@
   "name": "express-middleware",
   "version": "1.0.0",
   "description": "Set of middlewares for Chauffeur-Privé",
+  "keywords": [
+    "express",
+    "middleware",
+    "chauffeur-privé"
+  ],
   "main": "index.js",
   "dependencies": {
     "bunyan": "~1.8.0",
