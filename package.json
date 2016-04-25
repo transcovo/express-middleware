@@ -10,9 +10,9 @@
   "main": "index.js",
   "dependencies": {
     "bunyan": "~1.8.1",
-    "lodash": "^4.11.1",
+    "lodash": "~4.11.1",
     "morgan": "~1.7.0",
-    "node-uuid": "^1.4.7"
+    "node-uuid": "~1.4.7"
   },
   "devDependencies": {
     "chai": "~3.5.0",
