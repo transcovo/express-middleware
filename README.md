@@ -18,7 +18,7 @@ Force SSL redirection. Options object is optional. Two possibilities to disable 
 - add `disable`to `true` in setup options.
 
 ```js
-const sslRedirect = require('express-middlewares').sslRedirect;
+const sslRedirect = require('express-middleware').sslRedirect;
 app.use(sslRedirect(options));
 ```
 
@@ -29,7 +29,7 @@ app.use(sslRedirect(options));
 Add or append the request id to the `req` object.
 
 ```js
-const requestId = require('express-middlewares').requestId;
+const requestId = require('express-middleware').requestId;
 app.use(requestId());
 ```
 
@@ -40,7 +40,7 @@ app.use(requestId());
 Create a child logger and append it to the `req` object. Logger must be a bunyan instance (with the method `child`).
 
 ```js
-const childLogger = require('express-middlewares').childLogger;
+const childLogger = require('express-middleware').childLogger;
 app.use(childLogger(logger));
 ```
 
@@ -53,8 +53,8 @@ Append the token from header or query param to the `req` object.
 Query param format is `token=<mytoken>` and header format is `Authorization: Bearer <mytoken>`.  
 
 ```js
-const jwtToken = require('express-middlewares').jwtToken;
-app.use(jwtToken(logger));
+const jwtToken = require('express-middleware').jwtToken;
+app.use(jwtToken());
 ```
 
 **Middleware dependency** : _None_
@@ -64,7 +64,7 @@ app.use(jwtToken(logger));
 Log http access properties for each request (like Apache httpd) in JSON format.
 
 ```js
-const httpAccessLogger = require('express-middlewares').httpAccessLogger;
+const httpAccessLogger = require('express-middleware').httpAccessLogger;
 app.use(httpAccessLogger(opts));
 ```
 
