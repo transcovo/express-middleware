@@ -70,6 +70,30 @@ app.use(httpAccessLogger(opts));
 
 **Middleware dependency** : Child logger (optional if options are overridden), Request Id (optional), JWT Token (optional)
 
+### Language
+
+Set `req.language` according to the `Accpet-Language` header
+
+`opts.languages` is a mandatory array, it must contains at least one language.
+
+```js
+const language = require('express-middleware').language;
+app.use(language(opts));
+```
+
+**Middleware dependency** : _None_
+
+### i18n
+
+Parse i18n data in `req.body` using `req.language` value
+
+```js
+const i18n = require('express-middleware').i18n;
+app.use(i18n());
+```
+
+**Middleware dependency** : Language middleware
+
 ## Contribute
 
 ```sh
