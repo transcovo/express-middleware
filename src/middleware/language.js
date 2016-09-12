@@ -15,7 +15,11 @@ module.exports = setup;
  * @param  {Object} opts.languages the languages list
  * @return {void}
  */
-function setup({ languages }) {
+function setup({ languages = [] } = {}) {
+  if (!languages || !languages.length) {
+    throw new Error('opts.languages is mandatory');
+  }
+
   /**
    * Middleware
    * @param  {Object}   req  Express request

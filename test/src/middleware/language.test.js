@@ -43,6 +43,14 @@ describe('language middleware - language.js', function root() {
     });
   });
 
+  it('should throw if languages is not set', function test() {
+    expect(() => language({ languages: null })).to.throw();
+  });
+
+  it('should throw if languages is set but empty', function test() {
+    expect(() => language({ languages: [] })).to.throw();
+  });
+
   it('should throw if the header is not valid', function test() {
     const req = { get: () => 'abcdef' };
 
