@@ -31,8 +31,32 @@ describe('language middleware - language.js', function root() {
     });
   });
 
+  it('should take the correct language even if the region is not the same as language', function test(done) {
+    const req = { get: () => 'es-ES;q=1,ca-CA;q=0.9,en-FR;q=0.8' };
+
+    const middleware = language({ languages });
+    expect(middleware).to.be.instanceof(Function);
+
+    middleware(req, null, () => {
+      expect(req.language).to.equal(languages[0]);
+      done();
+    });
+  });
+
+  it('should take a fallback language if the header is present, but the first language(s) is not listed', function test(done) {
+    const req = { get: () => 'ca-CA;q=1,fr-FR;q=0.9' };
+
+    const middleware = language({ languages });
+    expect(middleware).to.be.instanceof(Function);
+
+    middleware(req, null, () => {
+      expect(req.language).to.equal(languages[1]);
+      done();
+    });
+  });
+
   it('should take the first available language if the header is present, but the language is not listed', function test(done) {
-    const req = { get: () => 'es-ES' };
+    const req = { get: () => 'ca-CA;q=1' };
 
     const middleware = language({ languages });
     expect(middleware).to.be.instanceof(Function);

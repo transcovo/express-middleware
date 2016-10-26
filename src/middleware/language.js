@@ -7,7 +7,31 @@ const { languageCodeExists } = require('country-language');
 
 module.exports = setup;
 
-// // //
+function languageObjectToString(language) {
+  return language.region ? `${language.code}-${language.region}` : language.code;
+}
+
+function findExactLanguageMatch(languages, parsedLanguages) {
+  const matchingLanguage = _.find(parsedLanguages,
+    lang => _.includes(languages, languageObjectToString(lang)));
+  return matchingLanguage ? languageObjectToString(matchingLanguage) : null;
+}
+
+function findPartialLanguageMatch(languages, parsedLanguages) {
+  const languagesByCode = _.reduce(languages, (languagesResult, language) => {
+    const code = language.split('-')[0];
+    if (languagesResult[code]) return languagesResult;
+    languagesResult[code] = language;
+    return languagesResult;
+  }, {});
+
+  let matchingLanguage;
+  _.find(parsedLanguages, lang => {
+    if (languagesByCode[lang.code]) matchingLanguage = languagesByCode[lang.code];
+    return matchingLanguage;
+  });
+  return matchingLanguage ? languageObjectToString(matchingLanguage) : null;
+}
 
 /**
  * Setup language middleware
@@ -30,14 +54,22 @@ function setup({ languages = [] } = {}) {
   return function middleware(req, res, next) {
     const acceptLanguage = req.get('Accept-Language');
 
-    const isOK = _.every(parser.parse(acceptLanguage),
-      (language) => languageCodeExists(language.code));
+    if (!acceptLanguage) {
+      req.language = languages[0];
+      return next();
+    }
 
+    const parsedLanguages = parser.parse(acceptLanguage);
+
+    const isOK = _.every(parsedLanguages,
+      (language) => languageCodeExists(language.code));
     if (!isOK) throw createError(400, 'error.language');
 
-    const language = parser.pick(languages, acceptLanguage);
+    const language = findExactLanguageMatch(languages, parsedLanguages)
+      || findPartialLanguageMatch(languages, parsedLanguages)
+      || languages[0];
 
-    req.language = language || languages[0];
+    req.language = language;
 
     return next();
   };
