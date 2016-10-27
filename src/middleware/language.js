@@ -12,15 +12,23 @@ function languageObjectToString(language) {
 }
 
 function findExactLanguageMatch(languages, parsedLanguages) {
-  const matchingLanguage = _.find(parsedLanguages,
-    lang => _.includes(languages, languageObjectToString(lang)));
+  let matchingLanguage;
+  _.find(parsedLanguages,
+    lang => {
+      const languageString = languageObjectToString(lang);
+      if (!lang.region) {
+        matchingLanguage = findPartialLanguageMatch(languages, [lang]);
+      } else if (_.includes(languages, languageString)) {
+        matchingLanguage = languageString;
+      }
+      return matchingLanguage;
+    });
   return matchingLanguage ? languageObjectToString(matchingLanguage) : null;
 }
 
 function findPartialLanguageMatch(languages, parsedLanguages) {
   const languagesByCode = _.reduce(languages, (languagesResult, language) => {
     const code = language.split('-')[0];
-    if (languagesResult[code]) return languagesResult;
     languagesResult[code] = language;
     return languagesResult;
   }, {});
@@ -30,7 +38,7 @@ function findPartialLanguageMatch(languages, parsedLanguages) {
     if (languagesByCode[lang.code]) matchingLanguage = languagesByCode[lang.code];
     return matchingLanguage;
   });
-  return matchingLanguage ? languageObjectToString(matchingLanguage) : null;
+  return matchingLanguage || null;
 }
 
 /**
