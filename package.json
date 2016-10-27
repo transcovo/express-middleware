@@ -34,7 +34,7 @@
     "test": "npm run lint && npm run coverage",
     "lint": "eslint .",
     "start": "npm test",
-    "coverage": "istanbul cover _mocha --report lcovonly -- --recursive -R spec",
+    "coverage": "istanbul cover _mocha -- --recursive -R spec",
     "coverage-html": "istanbul cover _mocha -- --recursive -R spec",
     "mocha": "mocha --recursive"
   },
