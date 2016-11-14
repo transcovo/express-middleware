@@ -1,16 +1,32 @@
 'use strict';
 
 const parser = require('accept-language-parser');
-const createError = require('http-errors');
 const _ = require('lodash');
 const { languageCodeExists } = require('country-language');
 
 module.exports = setup;
 
+/**
+ * Transform a language object from accept-language-parser to a language string.
+ *
+ * @param   {Object} language The language object.
+ * @param   {String} language.code The language code.
+ * @param   {String} [language.region] The language region.
+ * @returns {String} The language string.
+ */
 function languageObjectToString(language) {
   return language.region ? `${language.code}-${language.region}` : language.code;
 }
 
+/**
+ * Find matching language by exact match.
+ *
+ * To match, the language must have the same country code and region.
+ *
+ * @param   {Array} languages Array of known languages.
+ * @param   {Array} parsedLanguages Array of parsed languages from Accept-Language.
+ * @returns {String|null} The first matching language if found, null otherwise.
+ */
 function findExactLanguageMatch(languages, parsedLanguages) {
   let matchingLanguage;
   _.find(parsedLanguages,
@@ -26,6 +42,15 @@ function findExactLanguageMatch(languages, parsedLanguages) {
   return matchingLanguage ? languageObjectToString(matchingLanguage) : null;
 }
 
+/**
+ * Find matching language by partial match.
+ *
+ * To match, the language must have the same country code.
+ *
+ * @param   {Array} languages Array of known languages.
+ * @param   {Array} parsedLanguages Array of parsed languages from Accept-Language.
+ * @returns {String|null} The first matching language if found, null otherwise.
+ */
 function findPartialLanguageMatch(languages, parsedLanguages) {
   const languagesByCode = _.reduce(languages, (languagesResult, language) => {
     const code = language.split('-')[0];
