@@ -87,12 +87,15 @@ describe('language middleware - language.js', function root() {
     expect(() => language({ languages: [] })).to.throw();
   });
 
-  it('should throw if the header is not valid', function test() {
-    const req = { get: () => 'abcdef' };
+  it('should return the default language if the language can not be parsed', function* it() {
+    const req = { get: () => 'invalid' };
 
     const middleware = language({ languages });
     expect(middleware).to.be.instanceof(Function);
 
-    expect(() => middleware(req)).to.throw('error.language');
+    yield cb => middleware(req, null, () => {
+      expect(req.language).to.equal(languages[0]);
+      cb();
+    });
   });
 });
