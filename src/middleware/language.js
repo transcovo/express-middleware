@@ -69,12 +69,11 @@ function setup({ languages = [] } = {}) {
 
     const parsedLanguages = parser.parse(acceptLanguage);
 
-    const isOK = _.every(parsedLanguages,
-      (language) => languageCodeExists(language.code));
-    if (!isOK) throw createError(400, 'error.language');
+    const validParsedLanguages = _.filter(parsedLanguages,
+                                          language => languageCodeExists(language.code));
 
-    const language = findExactLanguageMatch(languages, parsedLanguages)
-      || findPartialLanguageMatch(languages, parsedLanguages)
+    const language = findExactLanguageMatch(languages, validParsedLanguages)
+      || findPartialLanguageMatch(languages, validParsedLanguages)
       || languages[0];
 
     req.language = language;
