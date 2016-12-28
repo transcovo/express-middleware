@@ -1,7 +1,7 @@
 ## Customize the test machine
 machine:
   node:
-    version: 6.3.1
+    version: 6.9.2
 
 general:
   artifacts:
