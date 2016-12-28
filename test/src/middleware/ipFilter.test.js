@@ -6,12 +6,12 @@ const ipFilter = require('../../../src/middleware/ipFilter.js');
 
 describe('No filtering - ipFilter.js', function root() {
   it('should correctly create but do nothing', function test(done) {
-    process.env.FILTER_IP = false;
-    process.env.PROTECTED_IPS = '127.0.0.1';
+    process.env.IP_FILTER_ENABLED = false;
+    process.env.IP_FILTER_DENIED_IPS = '127.0.0.1';
 
     const req = { get: () => { }, connection: { remoteAddress: '127.0.0.1' } };
     const res = { set: () => { } };
-    const opts = {};
+    const opts = { };
 
     const middleware = ipFilter(opts);
     expect(middleware).to.be.instanceof(Function);
@@ -22,7 +22,7 @@ describe('No filtering - ipFilter.js', function root() {
 
 describe('deny ip addresses - ipFilter.js', function root() {
   it('should correctly create and be called with no restrictions', function test(done) {
-    process.env.FILTER_IP = false;
+    process.env.IP_FILTER_ENABLED = false;
 
     const req = { get: () => { }, connection: { remoteAddress: '127.0.0.1' } };
     const res = { set: () => { } };
@@ -35,8 +35,8 @@ describe('deny ip addresses - ipFilter.js', function root() {
   });
 
   it('should correctly create and be called', function test(done) {
-    process.env.FILTER_IP = true;
-    process.env.PROTECTED_IPS = '';
+    process.env.IP_FILTER_ENABLED = true;
+    process.env.IP_FILTER_DENIED_IPS = '';
 
     const req = { get: () => { }, connection: { remoteAddress: '127.0.0.1' } };
     const res = { set: () => { } };
@@ -49,8 +49,8 @@ describe('deny ip addresses - ipFilter.js', function root() {
   });
 
   it('should not deny the IP', function test(done) {
-    process.env.FILTER_IP = true;
-    process.env.PROTECTED_IPS = '127.0.0.1';
+    process.env.IP_FILTER_ENABLED = true;
+    process.env.IP_FILTER_DENIED_IPS = '127.0.0.1';
 
     const req = { get: () => { }, connection: { remoteAddress: '127.0.0.2' } };
     const res = { set: () => { } };
@@ -63,8 +63,8 @@ describe('deny ip addresses - ipFilter.js', function root() {
   });
 
   it('should deny the IP address', function test(done) {
-    process.env.FILTER_IP = true;
-    process.env.PROTECTED_IPS = '127.0.0.1';
+    process.env.IP_FILTER_ENABLED = true;
+    process.env.IP_FILTER_DENIED_IPS = '127.0.0.1';
 
     const req = { get: () => { }, connection: { remoteAddress: '127.0.0.1' } };
     const res = { set: () => { } };
@@ -81,8 +81,8 @@ describe('deny ip addresses - ipFilter.js', function root() {
   });
 
   it('should deny the ip using a range', function test(done) {
-    process.env.FILTER_IP = true;
-    process.env.PROTECTED_IPS = '127.127.127.0 127.0.0.1,127.0.0.10';
+    process.env.IP_FILTER_ENABLED = true;
+    process.env.IP_FILTER_DENIED_IPS = '127.127.127.0 127.0.0.1,127.0.0.10';
 
     const req = { get: () => { }, connection: { remoteAddress: '127.0.0.5' } };
     const res = { set: () => { } };
@@ -98,8 +98,8 @@ describe('deny ip addresses - ipFilter.js', function root() {
   });
 
   it('should deny the ip using a range', function test(done) {
-    process.env.FILTER_IP = true;
-    process.env.PROTECTED_IPS = '127.127.127.0 127.0.0.1,127.0.0.10';
+    process.env.IP_FILTER_ENABLED = true;
+    process.env.IP_FILTER_DENIED_IPS = '127.127.127.0 127.0.0.1,127.0.0.10';
 
     const req = { get: () => { }, connection: { remoteAddress: '127.127.0.5' } };
     const res = { set: () => { } };
@@ -115,8 +115,8 @@ describe('deny ip addresses - ipFilter.js', function root() {
   });
 
   it('should deny the ip using a range', function test(done) {
-    process.env.FILTER_IP = true;
-    process.env.PROTECTED_IPS = '127.127.127.0 127.0.0.1,';
+    process.env.IP_FILTER_ENABLED = true;
+    process.env.IP_FILTER_DENIED_IPS = '127.127.127.0 127.0.0.1,';
 
     const req = { get: () => { }, connection: { remoteAddress: '127.127.0.5' } };
     const res = { set: () => { } };
@@ -132,12 +132,12 @@ describe('deny ip addresses - ipFilter.js', function root() {
   });
 
   it('should deny CIDR subnet', function test(done) {
+    process.env.IP_FILTER_ENABLED = true;
+    process.env.IP_FILTER_DENIED_IPS = '127.0.0.1/24';
+
     const req = { get: () => { }, connection: { remoteAddress: '127.0.0.5' } };
     const res = { set: () => { } };
     const opts = { };
-
-    process.env.FILTER_IP = true;
-    process.env.PROTECTED_IPS = '127.0.0.1/24';
 
     const middleware = ipFilter(opts);
     try {
@@ -151,12 +151,28 @@ describe('deny ip addresses - ipFilter.js', function root() {
 
 describe('allow ip addresses - ipFilter.js', function root() {
   it('should correctly create and be called', function test(done) {
-    process.env.FILTER_IP = true;
-    process.env.PROTECTED_IPS = '127.0.0.1';
+    process.env.IP_FILTER_ENABLED = true;
+    process.env.IP_FILTER_ALLOWED_IPS = '127.0.0.1';
+    process.env.IP_FILTER_MODE = 'allow';
 
     const req = { get: () => { }, connection: { remoteAddress: '127.0.0.1' } };
     const res = { set: () => { } };
-    const opts = { mode: 'allow' };
+    const opts = { };
+
+    const middleware = ipFilter(opts);
+    expect(middleware).to.be.instanceof(Function);
+
+    middleware(req, res, done);
+  });
+
+  it('should correctly create and be called', function test(done) {
+    process.env.IP_FILTER_ENABLED = true;
+    process.env.IP_FILTER_MODE = 'allow';
+    delete process.env.IP_FILTER_ALLOWED_IPS;
+
+    const req = { get: () => { }, connection: { remoteAddress: '127.0.0.1' } };
+    const res = { set: () => { } };
+    const opts = { };
 
     const middleware = ipFilter(opts);
     expect(middleware).to.be.instanceof(Function);
@@ -165,12 +181,13 @@ describe('allow ip addresses - ipFilter.js', function root() {
   });
 
   it('should not allow the IP', function test(done) {
-    process.env.FILTER_IP = true;
-    process.env.PROTECTED_IPS = '127.0.0.1';
+    process.env.IP_FILTER_ENABLED = true;
+    process.env.IP_FILTER_ALLOWED_IPS = '127.0.0.1';
+    process.env.IP_FILTER_MODE = 'allow';
 
     const req = { get: () => { }, connection: { remoteAddress: '127.0.0.2' } };
     const res = { set: () => { } };
-    const opts = { mode: 'allow' };
+    const opts = { };
 
     try {
       const middleware = ipFilter(opts);
@@ -184,8 +201,9 @@ describe('allow ip addresses - ipFilter.js', function root() {
   });
 
   it('should allow using allowedHeaders', function test(done) {
-    process.env.FILTER_IP = true;
-    process.env.PROTECTED_IPS = '127.0.0.2';
+    process.env.IP_FILTER_ENABLED = true;
+    process.env.IP_FILTER_ALLOWED_IPS = '127.0.0.2';
+    process.env.IP_FILTER_MODE = 'allow';
 
     const req = {
       headers: {
@@ -194,7 +212,7 @@ describe('allow ip addresses - ipFilter.js', function root() {
     };
     const res = { set: () => { } };
     /* eslint-disable no-console */
-    const opts = { log: true, logger: console.log, mode: 'allow', allowedHeaders: ['', 'x-forwarded-for'] };
+    const opts = { log: true, logger: console.log, allowedHeaders: ['', 'x-forwarded-for'] };
     /* eslint-enable no-console */
     const middleware = ipFilter(opts);
     expect(middleware).to.be.instanceof(Function);
@@ -203,8 +221,9 @@ describe('allow ip addresses - ipFilter.js', function root() {
   });
 
   it('should allow using allowedHeaders with port', function test(done) {
-    process.env.FILTER_IP = true;
-    process.env.PROTECTED_IPS = '127.0.0.2';
+    process.env.IP_FILTER_ENABLED = true;
+    process.env.IP_FILTER_ALLOWED_IPS = '127.0.0.2';
+    process.env.IP_FILTER_MODE = 'allow';
 
     const req = {
       headers: {
@@ -212,7 +231,7 @@ describe('allow ip addresses - ipFilter.js', function root() {
       }
     };
     const res = { set: () => { } };
-    const opts = { mode: 'allow', allowedHeaders: ['', 'x-forwarded-for'] };
+    const opts = { allowedHeaders: ['', 'x-forwarded-for'] };
 
     const middleware = ipFilter(opts);
     expect(middleware).to.be.instanceof(Function);
@@ -221,12 +240,13 @@ describe('allow ip addresses - ipFilter.js', function root() {
   });
 
   it('should allow the IP address', function test(done) {
-    process.env.FILTER_IP = true;
-    process.env.PROTECTED_IPS = '127.0.0.1';
+    process.env.IP_FILTER_ENABLED = true;
+    process.env.IP_FILTER_ALLOWED_IPS = '127.0.0.1';
+    process.env.IP_FILTER_MODE = 'allow';
 
     const req = { get: () => { }, connection: { remoteAddress: '127.0.0.1' } };
     const res = { set: () => { } };
-    const opts = { mode: 'allow' };
+    const opts = { };
 
     const middleware = ipFilter(opts);
     expect(middleware).to.be.instanceof(Function);
@@ -235,12 +255,13 @@ describe('allow ip addresses - ipFilter.js', function root() {
   });
 
   it('should allow the ip using a range', function test(done) {
-    process.env.FILTER_IP = true;
-    process.env.PROTECTED_IPS = '127.127.127.0 127.0.0.1,127.0.0.10';
+    process.env.IP_FILTER_ENABLED = true;
+    process.env.IP_FILTER_ALLOWED_IPS = '127.127.127.0 127.0.0.1,127.0.0.10';
+    process.env.IP_FILTER_MODE = 'allow';
 
     const req = { get: () => { }, connection: { remoteAddress: '127.0.0.5' } };
     const res = { set: () => { } };
-    const opts = { mode: 'allow' };
+    const opts = { };
 
     const middleware = ipFilter(opts);
     expect(middleware).to.be.instanceof(Function);
@@ -249,12 +270,13 @@ describe('allow ip addresses - ipFilter.js', function root() {
   });
 
   it('should allow CIDR subnet', function test(done) {
+    process.env.IP_FILTER_ENABLED = true;
+    process.env.IP_FILTER_ALLOWED_IPS = '127.0.0.1/24';
+    process.env.IP_FILTER_MODE = 'allow';
+
     const req = { get: () => { }, connection: { remoteAddress: '127.0.0.5' } };
     const res = { set: () => { } };
-    const opts = { mode: 'allow' };
-
-    process.env.FILTER_IP = true;
-    process.env.PROTECTED_IPS = '127.0.0.1/24';
+    const opts = { };
 
     const middleware = ipFilter(opts);
     expect(middleware).to.be.instanceof(Function);
@@ -263,12 +285,13 @@ describe('allow ip addresses - ipFilter.js', function root() {
   });
 
   it('should allow CIDR subnet', function test(done) {
+    process.env.IP_FILTER_ENABLED = true;
+    process.env.IP_FILTER_ALLOWED_IPS = '127.0.0.1/24';
+    process.env.IP_FILTER_MODE = 'allow';
+
     const req = { get: () => { }, connection: { remoteAddress: '127.127.0.5' } };
     const res = { set: () => { } };
-    const opts = { mode: 'allow' };
-
-    process.env.FILTER_IP = true;
-    process.env.PROTECTED_IPS = '127.0.0.1/24';
+    const opts = { };
 
     try {
       const middleware = ipFilter(opts);

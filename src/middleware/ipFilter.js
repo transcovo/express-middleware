@@ -11,72 +11,70 @@ const createError = require('http-errors');
   * testExplicitIp Test an Explicit IP against the list of constraints
   * @param  {String} ip          IP address of caller
   * @param  {String} constraints IPs to restrict or allow
-  * @param  {String} mode        mode of operation deny/allow
+  * @param  {String} isAllow        Is this allow mode
   * @return {Boolean}             True or False, if we should block or allow and matched
   */
-function testExplicitIp(ip, constraints, mode) {
+function testExplicitIp(ip, constraints, isAllow) {
   if (ip === constraints) {
-    return mode === 'allow';
+    return isAllow === true;
   }
-  return mode === 'deny';
+  return isAllow === false;
 }
 
 /**
  * testCidrBlock Test an Explicit IP against a CIDR subnet mask
  * @param  {String} ip          IP address of caller
  * @param  {String} constraints IPs to restrict or allow
- * @param  {String} mode        mode of operation deny/allow
+ * @param  {String} isAllow        Is this allow mode
  * @return {Boolean}             True or False, if we should block or allow and matched
  */
-function testCidrBlock(ip, constraints, mode) {
+function testCidrBlock(ip, constraints, isAllow) {
   if (rangeCheck.inRange(ip, constraints)) {
-    return mode === 'allow';
+    return isAllow === true;
   }
-  return mode === 'deny';
+  return isAllow === false;
 }
 
 /**
  * testRange Test an Explicit IP against an IP address range
  * @param  {String} ip          IP address of caller
  * @param  {Array} constraints  This is a max and min in an Array
- * @param  {String} mode        mode of operation deny/allow
+ * @param  {String} isAllow        Is this allow mode
  * @return {Boolean}             True or False, if we should block or allow and matched
  */
-function testRange(ip, constraints, mode) {
-  let withinRange;
-
+function testRange(ip, constraints, isAllow) {
   const startIp = iputil.toLong(constraints[0]);
   const endIp = iputil.toLong(constraints[1]);
   const longIp = iputil.toLong(ip);
 
-  withinRange = longIp >= startIp && longIp <= endIp;
+  const withinRange = longIp >= startIp && longIp <= endIp;
 
   if (withinRange === true) {
-    return mode === 'allow';
+    return isAllow === true;
   }
 
-  return mode === 'deny';
+  return isAllow === false;
 }
 
 /**
  * testIp Test each constraint to see if it's a single IP address, range or block
  * @param  {String} ip          IP address of caller
- * @param  {String} mode        mode of operation deny/allow
+ * @param  {Boolean} isAllow       Is this allow mode
  * @return {Boolean}             True or False, if we should block or allow and matched
  */
-function testIp(ip, mode) {
+function testIp(ip, isAllow) {
   const constraint = this;
 
   // Check if it is an array or a string
   if (typeof constraint === 'string') {
     if (rangeCheck.validRange(constraint)) {
-      return testCidrBlock(ip, constraint, mode);
+      return testCidrBlock(ip, constraint, isAllow);
     }
-    return testExplicitIp(ip, constraint, mode);
+    return testExplicitIp(ip, constraint, isAllow);
   }
   /* istanbul ignore else  */
   if (typeof constraint === 'object') {
-    return testRange(ip, constraint, mode);
+    return testRange(ip, constraint, isAllow);
   }
 }
 
@@ -85,15 +83,13 @@ function testIp(ip, mode) {
  * @param  {Array} blockedIps     Full list of all constraints
  * @param  {String} ip          IP address of caller
  * @param  {Request} req        The HTTP request
- * @param  {Object} options        The options for the operation
+ * @param  {Boolean} isAllow        Is this allow mode
  * @return {Boolean}             True or False, if we should block or allow and matched
  */
-function matchClientIp(blockedIps, ip, req, options) {
-  const mode = options.mode.toLowerCase();
+function matchClientIp(blockedIps, ip, req, isAllow) {
+  const result = _.invokeMap(blockedIps, testIp, ip, isAllow);
 
-  const result = _.invokeMap(blockedIps, testIp, ip, mode);
-
-  if (mode === 'allow') {
+  if (isAllow) {
     return _.some(result);
   }
   return _.every(result);
@@ -141,8 +137,8 @@ function getClientIp(req, options) {
  */
 function setup(opts) {
   const options = Object.assign({
-    ipFilterEnabled: process.env.FILTER_IP === 'true',
-    mode: 'deny',
+    ipFilterEnabled: process.env.IP_FILTER_ENABLED === 'true',
+    mode: process.env.IP_FILTER_MODE || 'deny',
     log: false,
     logger: null,
     allowedHeaders: [],
@@ -158,14 +154,25 @@ function setup(opts) {
    * @returns {void}
    */
   return function middleware(req, res, next) {
+    let ipList = null;
+    let isAllow = false;
+
     // Are we configured to listen for IPs ?
     if (options.ipFilterEnabled) {
       const ip = getClientIp(req, options);
       // Split the blocked ips by a space and then determine their 'type'
 
-      if (!process.env.PROTECTED_IPS) { return next(); }
+      if (options.mode === 'allow') {
+        isAllow = true;
+        if (!process.env.IP_FILTER_ALLOWED_IPS) { return next(); }
+        ipList = process.env.IP_FILTER_ALLOWED_IPS.split(' ');
+      }
+      if (options.mode === 'deny') {
+        isAllow = false;
+        if (!process.env.IP_FILTER_DENIED_IPS) { return next(); }
+        ipList = process.env.IP_FILTER_DENIED_IPS.split(' ');
+      }
 
-      const ipList = process.env.PROTECTED_IPS.split(' ');
       const blockedIps = _.map(ipList, (e) => {
         if (e.includes(',') > 0) {
           const startEnd = e.split(',');
@@ -174,9 +181,9 @@ function setup(opts) {
         return e;
       });
 
-      if (matchClientIp(blockedIps, ip, req, options)) {
+      if (matchClientIp(blockedIps, ip, req, isAllow)) {
         // Grant access
-        if (options.log && options.mode !== 'deny') {
+        if (options.log && isAllow) {
           options.logger(`Access granted to IP address: ${ip}`);
         }
 
@@ -184,7 +191,7 @@ function setup(opts) {
       }
 
       // Deny access
-      if (options.log && options.mode !== 'allow') {
+      if (options.log && !isAllow) {
         options.logger(`Access denied to IP address: ${ip}`);
       }
 
