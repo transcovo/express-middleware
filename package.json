@@ -1,6 +1,6 @@
 {
   "name": "express-middleware",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Set of middlewares for Chauffeur-Privé",
   "keywords": [
     "express",
@@ -14,6 +14,8 @@
     "bunyan": "~1.8.1",
     "co-express": "^1.2.2",
     "country-language": "^0.1.7",
+    "http-errors": "1.5.1",
+    "ipaddr.js": "1.2.0",
     "lodash": "~4.11.1",
     "morgan": "~1.7.0",
     "node-uuid": "~1.4.7"
