@@ -94,6 +94,34 @@ app.use(i18n());
 
 **Middleware dependency** : Language middleware
 
+### IP Filter
+
+Accept or reject requests based upon their IP address.
+Controlled by 2 new environment variables
+
+FILTER_IP = true or false (turn it on or off)
+PROTECTED_IPS = SPACE separated list of (a) individual IP addresses (b) IP address ranges
+(c) CIDR blocks
+
+e.g.
+PROTECTED_IPS=127.0.0.1 127.0.0.2 127.0.0.3,127.0.0.10 127.127.127.0/24
+
+```js
+const ipFilter = require('express-middleware').ipFilter;
+
+const options = {
+  ipFilterEnabled: process.env.FILTER_IP === 'true',
+  mode: ['deny'/'allow'],
+  log: [false/true],
+  logger: [console.log/logger.debug],
+  allowedHeaders: []
+};
+
+app.use(ipFilter(opts));
+```
+
+**Middleware dependency** : _None_
+
 ## Contribute
 
 ```sh
