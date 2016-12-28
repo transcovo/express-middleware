@@ -38,7 +38,7 @@ function testCidrBlock(ip, constraints, isAllow) {
 /**
  * testRange Test an Explicit IP against an IP address range
  * @param  {String} ip          IP address of caller
- * @param  {Array} constraints  This is a max and min in an Array
+ * @param  {Array} constraints  This is a min and max in an Array
  * @param  {String} isAllow        Is this allow mode
  * @return {Boolean}             True or False, if we should block or allow and matched
  */
