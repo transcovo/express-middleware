@@ -35,7 +35,7 @@
     "start": "npm test",
     "coverage": "istanbul cover _mocha -- --recursive -R spec",
     "coverage-html": "istanbul cover _mocha -- --recursive -R spec",
-    "mocha": "mocha --recursive"
+    "mocha": "mocha"
   },
   "repository": {
     "type": "git",
