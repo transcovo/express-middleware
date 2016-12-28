@@ -14,12 +14,12 @@
     "bunyan": "~1.8.1",
     "co-express": "^1.2.2",
     "country-language": "^0.1.7",
-    "http-errors": "1.5.1",
-    "ip": "1.1.4",
+    "http-errors": "^1.5.1",
+    "ip": "^1.1.4",
     "lodash": "~4.11.1",
     "morgan": "~1.7.0",
     "node-uuid": "~1.4.7",
-    "range_check": "1.4.0"
+    "range_check": "^1.4.0"
   },
   "devDependencies": {
     "chai": "~3.5.0",
