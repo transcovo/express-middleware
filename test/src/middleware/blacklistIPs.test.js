@@ -29,11 +29,12 @@ describe('blacklistIPs middleware', function root() {
     const middleware = blacklistIPs();
 
     middleware(req, res, (err) => {
+      /* eslint-disable no-unused-expressions */
       expect(err).to.not.exist;
+      /* eslint-enable no-unused-expressions */
       done();
     });
   });
-
 
   it('should accept a non-blacklisted ip', function test(done) {
     sandbox.stub(process.env, 'IP_BLACKLIST', blacklistedIP);
@@ -43,7 +44,9 @@ describe('blacklistIPs middleware', function root() {
     const middleware = blacklistIPs();
 
     middleware(req, res, (err) => {
+      /* eslint-disable no-unused-expressions */
       expect(err).to.not.exist;
+      /* eslint-enable no-unused-expressions */
       done();
     });
   });

@@ -94,6 +94,19 @@ app.use(i18n());
 
 **Middleware dependency** : Language middleware
 
+### IP Blacklisting
+
+Force IP address validation before accepting a request.
+- set environment variable IP_BLACKLIST to be a list of comma separated IP addresses
+
+```js
+const ipBlacklist = require('express-middleware').blacklistIPs;
+app.use(ipBlacklist());
+```
+
+**Middleware dependency** : _None_
+
+
 ## Contribute
 
 ```sh
