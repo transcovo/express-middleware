@@ -7,6 +7,7 @@ const jwtToken = require('./src/middleware/jwtToken');
 const sslRedirect = require('./src/middleware/sslRedirect');
 const language = require('./src/middleware/language');
 const i18n = require('./src/middleware/i18n');
+const blacklistIPs = require('./src/middleware/blacklistIPs');
 
 module.exports = {
   childLogger,
@@ -15,7 +16,8 @@ module.exports = {
   jwtToken,
   sslRedirect,
   language,
-  i18n
+  i18n,
+  blacklistIPs
 };
 
 // // //
