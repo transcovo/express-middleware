@@ -1,6 +1,6 @@
 {
   "name": "express-middleware",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "Set of middlewares for Chauffeur-Privé",
   "keywords": [
     "express",
@@ -26,17 +26,19 @@
     "coveralls": "~2.11.6",
     "eslint": "~1.10.3",
     "eslint-config-cp": "transcovo/eslint-config-cp#1.1.0",
+    "express": "^4.14.0",
     "istanbul": "~0.4.2",
     "mocha": "~2.4.5",
     "mocha-lcov-reporter": "~1.0.0",
-    "sinon": "~1.17.3"
+    "sinon": "~1.17.3",
+    "supertest": "^2.0.1"
   },
   "scripts": {
     "test": "npm run lint && npm run coverage",
     "lint": "eslint .",
     "start": "npm test",
-    "coverage": "istanbul cover _mocha -- --recursive -R spec",
-    "coverage-html": "istanbul cover _mocha -- --recursive -R spec",
+    "coverage": "istanbul cover _mocha",
+    "coverage-html": "istanbul cover _mocha",
     "mocha": "mocha"
   },
   "repository": {

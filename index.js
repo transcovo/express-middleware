@@ -8,6 +8,7 @@ const sslRedirect = require('./src/middleware/sslRedirect');
 const language = require('./src/middleware/language');
 const i18n = require('./src/middleware/i18n');
 const blacklistIPs = require('./src/middleware/blacklistIPs');
+const monitorRoute = require('./src/middleware/monitorRoute');
 
 module.exports = {
   childLogger,
@@ -17,7 +18,8 @@ module.exports = {
   sslRedirect,
   language,
   i18n,
-  blacklistIPs
+  blacklistIPs,
+  monitorRoute
 };
 
 // // //
