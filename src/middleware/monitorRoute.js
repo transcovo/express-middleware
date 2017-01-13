@@ -7,6 +7,7 @@ module.exports = setup;
 // // //
 
 const PATH_REPLACE_IDS = /([\da-f]{24}|\d+)/g;
+const PATH_REPLACE_LONG = /(\/)(\d|[a-z]|[A-Z]|:|\.|-|_){16,}[^\/]*($|\/)/g;
 const PATH_SEPARATOR = /\/+/g;
 
 /**
@@ -18,9 +19,10 @@ function getRouteIdentifier(req) {
   const method = get(req, 'method', 'na');
   const protocol = get(req, 'protocol', 'na');
   const path = `${get(req, 'path', 'na')}`
-    .substr(1)
     .replace(PATH_REPLACE_IDS, ':id')
+    .replace(PATH_REPLACE_LONG, '$1:possibleid$3')
     .replace(PATH_SEPARATOR, '_')
+    .substr(1)
   ;
 
   return `${protocol}.${method}.${path}`;

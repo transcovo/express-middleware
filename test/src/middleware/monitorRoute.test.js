@@ -79,6 +79,17 @@ describe('monitor route middleware - monitorRoute.js', () => {
     });
   });
 
+  it('removes the strings long and possibly undetected ids', done => {
+    const middleware = monitorRoute(metrics);
+    middleware(Object.assign({}, req, {
+      path: '/users/_EjQ.xOCB-DaGVtaW4gZGVzIFl2YXJ0cywgU2FpbnQtR2VybWFpbi1sYS12aWxsZSwgRnJhbmNl/access'
+    }), null, () => {
+      expect(stub.calledOnce).to.be.equal(true);
+      expect(stub.args[0]).to.be.deep.equal(['https.GET.users_:possibleid_access']);
+      done();
+    });
+  });
+
   it('removes all possibles ids from the path', done => {
     const middleware = monitorRoute(metrics);
     middleware(Object.assign({}, req, {
