@@ -19,7 +19,7 @@
     "ipaddr.js": "1.2.0",
     "lodash": "4.11.1",
     "morgan": "1.7.0",
-    "node-uuid": "1.4.7"
+    "uuid": "3.0.1"
   },
   "devDependencies": {
     "chai": "3.5.0",
