@@ -79,6 +79,17 @@ describe('monitor route middleware - monitorRoute.js', () => {
     });
   });
 
+  it('removes the flight numbers from the path', done => {
+    const middleware = monitorRoute(metrics);
+    middleware(Object.assign({}, req, {
+      path: '/flight/NW1451'
+    }), null, () => {
+      expect(stub.calledOnce).to.be.equal(true);
+      expect(stub.args[0]).to.be.deep.equal(['https.GET.flight_:id']);
+      done();
+    });
+  });
+
   it('removes the strings long and possibly undetected ids', done => {
     const middleware = monitorRoute(metrics);
     middleware(Object.assign({}, req, {
