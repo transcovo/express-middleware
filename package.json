@@ -46,7 +46,7 @@
     "url": "git+https://github.com/transcovo/express-middlewares.git"
   },
   "engines": {
-    "node": ">=6.0.0",
+    "node": "6.11.1",
     "npm": ">=2.14.7"
   },
   "bugs": {

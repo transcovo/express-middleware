@@ -1,12 +1,9 @@
-## Customize the test machine
 machine:
   node:
-    version: 6.9.2
-
+    version: 6.11.1
 general:
   artifacts:
-    - "coverage"
-
+    - coverage
 test:
   post:
     - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
