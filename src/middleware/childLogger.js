@@ -24,7 +24,7 @@ function setup(logger) {
    * @returns {void}
    */
   return function middleware(req, res, next) {
-    req.logger = logger.child({ requestId: req.requestId });
+    req.logger = logger.child({ requestId: req.requestId, requestPath: req.requestPath });
     next();
   };
 }
