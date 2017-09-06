@@ -21,7 +21,7 @@ describe('child logger middleware - childLogger.js', function root() {
     middleware(req, null, () => {
       childSpy.calledOnce;
       expect(childSpy.args[0].length).to.equal(1);
-      expect(childSpy.args[0][0]).to.deep.equal({ requestId: '110e8400-e29b-11d4-a716-446655440000' });
+      expect(childSpy.args[0][0]).to.deep.equal({ requestId: '110e8400-e29b-11d4-a716-446655440000', requestPath: undefined });
       done();
     });
   });
@@ -37,7 +37,7 @@ describe('child logger middleware - childLogger.js', function root() {
     middleware(req, null, () => {
       childSpy.calledOnce;
       expect(childSpy.args[0].length).to.equal(1);
-      expect(childSpy.args[0][0]).to.deep.equal({ requestId: undefined });
+      expect(childSpy.args[0][0]).to.deep.equal({ requestId: undefined, requestPath: undefined });
       done();
     });
   });
