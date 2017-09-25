@@ -1,0 +1,20 @@
+'use strict';
+
+const keys = {
+  original: `-----BEGIN PUBLIC KEY-----
+MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAxHWGhSkfYnbgHYKJ/KVG
+dBJ3pMoRsbl43x/H+0knzBl0IKR7Btk2PR5VGk9xelOCQQmyepyG0nfycThm5+1U
+DFFv/WMRMg3YHKocHMJ78HvjBhzBETWnM3xywmHqmDPc8RKPLsjVwpLn0ohJ94V7
+qz3ghttTJN7OquAELkxOHxb6O9lJcCcku/ZbttggrP32abh5KhpCtl/5sodMixiA
+frx+s6NIdyvlYj8Y2UmhyPYzso/tCqiYByBZPHmjrJDTQHgppgU+gMjbrek8pl9u
+P555Al2ejqJ0hRtPfEW09hh3jcr4G8ltEisJLJsay4D2DrkbIT6XPi75o79203xz
+llod62g9Bcwi8jqdonRRyWIdswhFjX4CtscLxdllQaaPtorVGDuKJdByBJq6adTB
+wH8YKBMNEOflZAUFiRVnYPYMZ4IEhRCyWk6u6U+5OdQlg6vGHd2TcQ3xU1qbTu+I
+QyB8SePMRd5XkZfd0D/stAjtrH4mKre5fNBd7G9g8xhXov4UzXjrfm5hfcvJQAPG
+63EDWTd39zAIAee1DUT8ZXj58YaEKYcZEOm2q/z/JF+D0WG6YVktJlGrO7DSOFAA
+FC04z/LXuPbCi5MgNIx8c2ulfuHPXzysKTYmN0jv5vBYrU9VofSP35OeUjz24WBf
+JgiKJMLoQ8MMgLNHOPS3bQECAwEAAQ==
+-----END PUBLIC KEY-----`
+};
+
+module.exports = keys;
