@@ -12,11 +12,11 @@ const tokensFixtures = require('../../fixtures/auth/tokens.fixtures');
 describe('Authentication middleware - auth.js', function root() {
   let sandbox;
 
-  before(function () {
+  before(() => {
     sandbox = sinon.sandbox.create();
   });
 
-  beforeEach(function () {
+  beforeEach(() => {
     sandbox.restore();
   });
 
@@ -63,7 +63,7 @@ describe('Authentication middleware - auth.js', function root() {
   });
 
   it('should throw error if no token is provided in the request', function* test() {
-    const middleware = auth(false, keysFixtures.original);
+    const middleware = auth(false, keysFixtures.valid);
     const req = {
       get: () => {
       }
@@ -84,7 +84,7 @@ describe('Authentication middleware - auth.js', function root() {
   });
 
   it('should throw error if the token signature is invalid', function* test() {
-    const middleware = auth(false, keysFixtures.original);
+    const middleware = auth(false, keysFixtures.valid);
     const req = {
       token: tokensFixtures.original.invalidSignature,
       get: () => {
@@ -105,8 +105,74 @@ describe('Authentication middleware - auth.js', function root() {
     }
   });
 
+  it('should throw error if the token signature does not match with all keys', function* test() {
+    const middleware = auth(false, keysFixtures.severalKeys);
+    const req = {
+      token: tokensFixtures.original.invalidSignature,
+      get: () => {
+      }
+    };
+    const res = {
+      set: () => {
+      }
+    };
+
+    expect(middleware).to.be.instanceof(Function);
+
+    try {
+      yield middleware(req, res, _.noop());
+    } catch (err) {
+      expect(err.status).to.equal(401);
+      expect(err.message).to.equal('Token validation failed');
+    }
+  });
+
+  it('should throw error if the token signature does not match with the used key', function* test() {
+    const middleware = auth(false, keysFixtures.invalid);
+    const req = {
+      token: tokensFixtures.original.valid,
+      get: () => {
+      }
+    };
+    const res = {
+      set: () => {
+      }
+    };
+
+    expect(middleware).to.be.instanceof(Function);
+
+    try {
+      yield middleware(req, res, _.noop());
+    } catch (err) {
+      expect(err.status).to.equal(401);
+      expect(err.message).to.equal('Token validation failed');
+    }
+  });
+
   it('should throw error if the token is expired', function* test() {
-    const middleware = auth(false, keysFixtures.original);
+    const middleware = auth(false, keysFixtures.valid);
+    const req = {
+      token: tokensFixtures.original.expired,
+      get: () => {
+      }
+    };
+    const res = {
+      set: () => {
+      }
+    };
+
+    expect(middleware).to.be.instanceof(Function);
+
+    try {
+      yield middleware(req, res, _.noop());
+    } catch (err) {
+      expect(err.status).to.equal(401);
+      expect(err.message).to.equal('Token expired');
+    }
+  });
+
+  it('should priority throw expired token error if the token is expired and does not match the other keys', function* test() {
+    const middleware = auth(false, keysFixtures.severalKeys);
     const req = {
       token: tokensFixtures.original.expired,
       get: () => {
@@ -128,7 +194,32 @@ describe('Authentication middleware - auth.js', function root() {
   });
 
   it('should set the token payload in the request if the token is valid', function* test() {
-    const middleware = auth(false, keysFixtures.original);
+    const middleware = auth(false, keysFixtures.valid);
+    const errorSpy = sandbox.spy(createError);
+    const req = {
+      token: tokensFixtures.original.valid,
+      get: () => {
+      }
+    };
+    const res = {
+      set: () => {
+      }
+    };
+
+    expect(middleware).to.be.instanceof(Function);
+
+    yield middleware(req, res, () => {
+      expect(req.token).to.equal(tokensFixtures.original.valid);
+      expect(req.user).to.deep.equal({
+        foo: 'bar',
+        iat: 1506357382
+      });
+      expect(errorSpy.callCount).to.equal(0);
+    });
+  });
+
+  it('should set the token payload in the request if the token is valid on one of the keys', function* test() {
+    const middleware = auth(false, keysFixtures.severalKeys);
     const errorSpy = sandbox.spy(createError);
     const req = {
       token: tokensFixtures.original.valid,
