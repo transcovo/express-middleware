@@ -1,6 +1,6 @@
 {
   "name": "express-middleware",
-  "version": "1.9.2",
+  "version": "1.9.3",
   "dependencies": {
     "@chauffeur-prive/i18n": {
       "version": "1.7.1",
@@ -124,6 +124,11 @@
       "version": "1.2.0",
       "from": "ipaddr.js@1.2.0",
       "resolved": "http://registry.npmjs.org/ipaddr.js/-/ipaddr.js-1.2.0.tgz"
+    },
+    "jwt-simple": {
+      "version": "0.5.1",
+      "from": "jwt-simple@0.5.1",
+      "resolved": "https://registry.npmjs.org/jwt-simple/-/jwt-simple-0.5.1.tgz"
     },
     "lodash": {
       "version": "4.11.2",

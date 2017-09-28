@@ -14,11 +14,14 @@
     "bunyan": "~1.8.1",
     "co-express": "^1.2.2",
     "country-language": "^0.1.7",
+    "dirty-chai": "^2.0.1",
     "http-errors": "1.5.1",
     "ipaddr.js": "1.2.0",
+    "jwt-simple": "0.5.1",
     "lodash": "~4.11.1",
     "morgan": "~1.7.0",
-    "node-uuid": "~1.4.7"
+    "node-uuid": "~1.4.7",
+    "sinon-chai": "^2.13.0"
   },
   "devDependencies": {
     "chai": "~3.5.0",
