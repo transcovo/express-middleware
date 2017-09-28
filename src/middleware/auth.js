@@ -3,7 +3,6 @@
 'use strict';
 
 const jwt = require('jwt-simple');
-const wrap = require('co-express');
 const createError = require('http-errors');
 const _ = require('lodash');
 
@@ -12,19 +11,7 @@ const VALIDATION_FAILED = 'Token validation failed';
 const NOT_CONNECTED = 'User not connected';
 const NEED_KEY = 'IDP secret for JWT is not set';
 const ALGORITHM = 'RS256';
-const KEY_END_STRING = '-----END PUBLIC KEY-----\n';
-
-/**
- * This functions takes a string of concatenated PEM public keys and splits
- * them in an array.
- * @param {string} keysString - Concatenated PEM public keys
- * @returns {Array} Separated PEM public keys
- */
-function retrieveKeys(keysString) {
-  const keys = keysString.split(KEY_END_STRING);
-
-  return _.map(keys, (item, index) => (index + 1 === keys.length) ? item : item + '-----END PUBLIC KEY-----');
-}
+const PUBLIC_KEYS_SEPARATOR = ';\n';
 
 /**
  * This functions checks several PEM public keys among the
@@ -46,10 +33,10 @@ function validateToken(keys, token) {
       payload = jwt.decode(token, key, false, [ALGORITHM]);
     } catch (err) {
       if (err.message === EXPIRED) {
-        error = createError(401, EXPIRED);
+        error = new createError.Unauthorized(EXPIRED);
       }
       if (_.get(error, 'message') !== EXPIRED) {
-        error = createError(401, VALIDATION_FAILED);
+        error = new createError.Unauthorized(VALIDATION_FAILED);
       }
     }
   });
@@ -72,6 +59,11 @@ function validateToken(keys, token) {
  * @returns {middleware} Express middleware function
  */
 function setup(ignoreAuth, jwtKeys) {
+  let keys = [];
+  if (jwtKeys) {
+    keys = jwtKeys.split(PUBLIC_KEYS_SEPARATOR);
+  }
+
   /**
    * Express middleware that checks authentication token
    * @param {Object} req Express request
@@ -79,21 +71,21 @@ function setup(ignoreAuth, jwtKeys) {
    * @param {Function} next Express next middleware
    * @returns {void}
    */
-  return wrap(function* middleware(req, res, next) {
+  return function middleware(req, res, next) {
     if (ignoreAuth) return next();
-    if (!jwtKeys) {
-      throw createError(500, NEED_KEY);
-    }
 
     const token = req.token;
-    if (!token) throw createError(401, NOT_CONNECTED);
+    if (!token) throw new createError.Unauthorized(NOT_CONNECTED);
 
-    const keys = retrieveKeys(jwtKeys);
+    if (keys.length === 0) {
+      throw new createError.InternalServerError(NEED_KEY);
+    }
+
     const payload = validateToken(keys, token);
 
     req.user = payload;
     return next();
-  });
+  };
 }
 
 module.exports = setup;

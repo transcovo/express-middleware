@@ -34,16 +34,18 @@ describe('Authentication middleware - auth.js', function root() {
 
     expect(middleware).to.be.instanceof(Function);
 
-    yield middleware(req, res, () => {
+    middleware(req, res, () => {
       expect(req.token).to.equal(undefined);
       expect(req.user).to.equal(undefined);
-      expect(errorSpy.callCount).to.equal(0);
+      expect(errorSpy.called).to.be.false();
     });
   });
 
   it('should throw error if no key is provided', function* test() {
     const middleware = auth(false, null);
+    let error;
     const req = {
+      token: tokensFixtures.original.valid,
       get: () => {
       }
     };
@@ -55,14 +57,18 @@ describe('Authentication middleware - auth.js', function root() {
     expect(middleware).to.be.instanceof(Function);
 
     try {
-      yield middleware(req, res, _.noop());
+      middleware(req, res, _.noop);
     } catch (err) {
-      expect(err.status).to.equal(500);
-      expect(err.message).to.equal('IDP secret for JWT is not set');
+      error = err;
+    } finally {
+      expect(error).to.not.be.undefined();
+      expect(error.status).to.equal(500);
+      expect(error.message).to.equal('IDP secret for JWT is not set');
     }
   });
 
   it('should throw error if no token is provided in the request', function* test() {
+    let error;
     const middleware = auth(false, keysFixtures.valid);
     const req = {
       get: () => {
@@ -76,14 +82,18 @@ describe('Authentication middleware - auth.js', function root() {
     expect(middleware).to.be.instanceof(Function);
 
     try {
-      yield middleware(req, res, _.noop());
+      middleware(req, res, _.noop);
     } catch (err) {
-      expect(err.status).to.equal(401);
-      expect(err.message).to.equal('User not connected');
+      error = err;
+    } finally {
+      expect(error).to.not.be.undefined();
+      expect(error.status).to.equal(401);
+      expect(error.message).to.equal('User not connected');
     }
   });
 
   it('should throw error if the token signature is invalid', function* test() {
+    let error;
     const middleware = auth(false, keysFixtures.valid);
     const req = {
       token: tokensFixtures.original.invalidSignature,
@@ -98,15 +108,19 @@ describe('Authentication middleware - auth.js', function root() {
     expect(middleware).to.be.instanceof(Function);
 
     try {
-      yield middleware(req, res, _.noop());
+      middleware(req, res, _.noop);
     } catch (err) {
-      expect(err.status).to.equal(401);
-      expect(err.message).to.equal('Token validation failed');
+      error = err;
+    } finally {
+      expect(error).to.not.be.undefined();
+      expect(error.status).to.equal(401);
+      expect(error.message).to.equal('Token validation failed');
     }
   });
 
   it('should throw error if the token signature does not match with all keys', function* test() {
-    const middleware = auth(false, keysFixtures.severalKeys);
+    let error;
+    const middleware = auth(false, keysFixtures.severalValidAndInvalid);
     const req = {
       token: tokensFixtures.original.invalidSignature,
       get: () => {
@@ -120,14 +134,18 @@ describe('Authentication middleware - auth.js', function root() {
     expect(middleware).to.be.instanceof(Function);
 
     try {
-      yield middleware(req, res, _.noop());
+      middleware(req, res, _.noop);
     } catch (err) {
-      expect(err.status).to.equal(401);
-      expect(err.message).to.equal('Token validation failed');
+      error = err;
+    } finally {
+      expect(error).to.not.be.undefined();
+      expect(error.status).to.equal(401);
+      expect(error.message).to.equal('Token validation failed');
     }
   });
 
   it('should throw error if the token signature does not match with the used key', function* test() {
+    let error;
     const middleware = auth(false, keysFixtures.invalid);
     const req = {
       token: tokensFixtures.original.valid,
@@ -142,14 +160,18 @@ describe('Authentication middleware - auth.js', function root() {
     expect(middleware).to.be.instanceof(Function);
 
     try {
-      yield middleware(req, res, _.noop());
+      middleware(req, res, _.noop);
     } catch (err) {
-      expect(err.status).to.equal(401);
-      expect(err.message).to.equal('Token validation failed');
+      error = err;
+    } finally {
+      expect(error).to.not.be.undefined();
+      expect(error.status).to.equal(401);
+      expect(error.message).to.equal('Token validation failed');
     }
   });
 
   it('should throw error if the token is expired', function* test() {
+    let error;
     const middleware = auth(false, keysFixtures.valid);
     const req = {
       token: tokensFixtures.original.expired,
@@ -164,15 +186,19 @@ describe('Authentication middleware - auth.js', function root() {
     expect(middleware).to.be.instanceof(Function);
 
     try {
-      yield middleware(req, res, _.noop());
+      middleware(req, res, _.noop);
     } catch (err) {
-      expect(err.status).to.equal(401);
-      expect(err.message).to.equal('Token expired');
+      error = err;
+    } finally {
+      expect(error).to.not.be.undefined();
+      expect(error.status).to.equal(401);
+      expect(error.message).to.equal('Token expired');
     }
   });
 
   it('should priority throw expired token error if the token is expired and does not match the other keys', function* test() {
-    const middleware = auth(false, keysFixtures.severalKeys);
+    let error;
+    const middleware = auth(false, keysFixtures.severalValidAndInvalid);
     const req = {
       token: tokensFixtures.original.expired,
       get: () => {
@@ -186,10 +212,13 @@ describe('Authentication middleware - auth.js', function root() {
     expect(middleware).to.be.instanceof(Function);
 
     try {
-      yield middleware(req, res, _.noop());
+      middleware(req, res, _.noop);
     } catch (err) {
-      expect(err.status).to.equal(401);
-      expect(err.message).to.equal('Token expired');
+      error = err;
+    } finally {
+      expect(error).to.not.be.undefined();
+      expect(error.status).to.equal(401);
+      expect(error.message).to.equal('Token expired');
     }
   });
 
@@ -208,18 +237,18 @@ describe('Authentication middleware - auth.js', function root() {
 
     expect(middleware).to.be.instanceof(Function);
 
-    yield middleware(req, res, () => {
+    middleware(req, res, () => {
       expect(req.token).to.equal(tokensFixtures.original.valid);
       expect(req.user).to.deep.equal({
         foo: 'bar',
         iat: 1506357382
       });
-      expect(errorSpy.callCount).to.equal(0);
+      expect(errorSpy).to.not.have.been.called();
     });
   });
 
   it('should set the token payload in the request if the token is valid on one of the keys', function* test() {
-    const middleware = auth(false, keysFixtures.severalKeys);
+    const middleware = auth(false, keysFixtures.severalValidAndInvalid);
     const errorSpy = sandbox.spy(createError);
     const req = {
       token: tokensFixtures.original.valid,
@@ -233,13 +262,13 @@ describe('Authentication middleware - auth.js', function root() {
 
     expect(middleware).to.be.instanceof(Function);
 
-    yield middleware(req, res, () => {
+    middleware(req, res, () => {
       expect(req.token).to.equal(tokensFixtures.original.valid);
       expect(req.user).to.deep.equal({
         foo: 'bar',
         iat: 1506357382
       });
-      expect(errorSpy.callCount).to.equal(0);
+      expect(errorSpy).to.not.have.been.called();
     });
   });
 });
