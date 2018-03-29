@@ -7,7 +7,7 @@ const childLogger = require('../../../src/middleware/childLogger.js');
 
 describe('child logger middleware - childLogger.js', function root() {
   it('should throw assertion error when logger is missing', function test() {
-    expect(childLogger).to.throw('AssertionError');
+    expect(childLogger).to.throw('Logger is missing');
   });
 
   it('should work with a requestId', function test(done) {

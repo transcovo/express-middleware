@@ -29,13 +29,13 @@ describe('monitor route middleware - monitorRoute.js', () => {
   });
 
   it('throws assertion error when metric is missing', () => {
-    expect(monitorRoute).to.throw('AssertionError');
+    expect(monitorRoute).to.throw('metrics is missing');
   });
 
   it('throws assertion error when metric has no increment method', () => {
     expect(() => {
       monitorRoute({});
-    }).to.throw('AssertionError');
+    }).to.throw('Metrics must have a "increment" method');
   });
 
   it('must return a function', () => {
