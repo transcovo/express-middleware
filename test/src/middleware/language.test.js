@@ -79,6 +79,30 @@ describe('language middleware - language.js', function root() {
     });
   });
 
+  it('should match exactly the first language found in the Accept-Language header', function test(done) {
+    const req = { get: () => 'fr-FR,en-US;q=0.7' };
+
+    const middleware = language({ languages });
+    expect(middleware).to.be.instanceof(Function);
+
+    middleware(req, null, () => {
+      expect(req.language).to.equal('fr-FR');
+      done();
+    });
+  });
+
+  it('should match the first language found with a partial matching', function test(done) {
+    const req = { get: () => 'fr,en-US;q=0.7' };
+
+    const middleware = language({ languages });
+    expect(middleware).to.be.instanceof(Function);
+
+    middleware(req, null, () => {
+      expect(req.language).to.equal('fr-FR');
+      done();
+    });
+  });
+
   it('should throw if languages is not set', function test() {
     expect(() => language({ languages: null })).to.throw();
   });
