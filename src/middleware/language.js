@@ -39,7 +39,7 @@ function findExactLanguageMatch(languages, parsedLanguages) {
       }
       return matchingLanguage;
     });
-  return matchingLanguage ? languageObjectToString(matchingLanguage) : null;
+  return matchingLanguage || null;
 }
 
 /**
