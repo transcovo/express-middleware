@@ -103,6 +103,18 @@ describe('language middleware - language.js', function root() {
     });
   });
 
+  it('should match the first language found with a partial matching', function test(done) {
+    const req = { get: () => 'en-FR;q=1.0, en-GB;q=0.9, fr-FR;q=0.8, vi-FR;q=0.7' };
+
+    const middleware = language({ languages });
+    expect(middleware).to.be.instanceof(Function);
+
+    middleware(req, null, () => {
+      expect(req.language).to.equal('en-US');
+      done();
+    });
+  });
+
   it('should throw if languages is not set', function test() {
     expect(() => language({ languages: null })).to.throw();
   });
