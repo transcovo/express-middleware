@@ -11,6 +11,11 @@ describe('i18n middleware - i18n.js', function root() {
       key: 'test-key',
     }
   };
+  const sandbox = sinon.sandbox.create();
+
+  after(() => {
+    sandbox.restore();
+  });
 
   it('should do nothing if i18n is falsey', function* test() {
     const req = {
@@ -28,8 +33,8 @@ describe('i18n middleware - i18n.js', function root() {
 
     yield middleware(req, res, next);
 
-    sinon.assert.called(next);
-    sinon.assert.notCalled(res.json);
+    expect(next.callCount).to.equal(1);
+    expect(res.json.callCount).to.equal(0);
     expect(res.body).to.deep.equal(body);
   });
 
@@ -44,13 +49,18 @@ describe('i18n middleware - i18n.js', function root() {
 
     const next = sinon.spy();
 
-    const middleware = i18nMW();
+    const i18n = {
+      translate: () => {}
+    };
+    sandbox.stub(i18n, 'translate').resolves('translated value');
+
+    const middleware = i18nMW(i18n);
     expect(middleware).to.be.instanceof(Function);
 
     yield middleware(req, res, next);
 
-    sinon.assert.called(next);
-    sinon.assert.notCalled(res.json);
+    expect(next.callCount).to.equal(1);
+    expect(res.json.callCount).to.equal(0);
     expect(res.body2).to.deep.equal(body);
   });
 
@@ -85,7 +95,7 @@ describe('i18n middleware - i18n.js', function root() {
         }
       }]
     ]);
-    sinon.assert.notCalled(next);
+    expect(next.callCount).to.equal(0);
     expect(res.body).to.deep.equal(body);
     expect(i18nObj).to.deep.equal({
       lang: 'fr-FR',
@@ -95,5 +105,32 @@ describe('i18n middleware - i18n.js', function root() {
         }
       }
     });
+  });
+
+  it('should call translate successfully if i18n is passed as a promise and body exists', function* test() {
+    const req = {
+      language: 'fr-FR'
+    };
+    const res = {
+      body,
+      json: sinon.spy()
+    };
+    const next = sinon.spy();
+
+    const i18n = {
+      translate: () => {}
+    };
+    sandbox.stub(i18n, 'translate').resolves('translated value');
+
+    const middleware = i18nMW(i18n);
+    expect(middleware).to.be.instanceof(Function);
+
+    yield middleware(req, res);
+
+    expect(res.json.args).to.deep.equal([
+      ['translated value']
+    ]);
+    expect(next.callCount).to.equal(0);
+    expect(res.body).to.deep.equal('translated value');
   });
 });
