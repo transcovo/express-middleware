@@ -37,7 +37,7 @@ describe('blacklistIPs middleware', function root() {
   });
 
   it('should accept a non-blacklisted ip', function test(done) {
-    sandbox.stub(process.env, 'IP_BLACKLIST', blacklistedIP);
+    sandbox.stub(process.env, 'IP_BLACKLIST').value(blacklistedIP);
     const req = { get: () => otherIP, connection: { remoteAddress: otherIP } };
     const res = { set: () => { } };
 
@@ -52,7 +52,7 @@ describe('blacklistIPs middleware', function root() {
   });
 
   it('should reject a blacklisted ip from x-forwarded-for', function test(done) {
-    sandbox.stub(process.env, 'IP_BLACKLIST', blacklistedIP);
+    sandbox.stub(process.env, 'IP_BLACKLIST').value(blacklistedIP);
     const req = { get: () => otherIP, connection: { remoteAddress: blacklistedIP } };
     const res = { set: () => { } };
 
@@ -65,7 +65,7 @@ describe('blacklistIPs middleware', function root() {
   });
 
   it('should reject a blacklisted ip from remoteAddress', function test(done) {
-    sandbox.stub(process.env, 'IP_BLACKLIST', blacklistedIP);
+    sandbox.stub(process.env, 'IP_BLACKLIST').value(blacklistedIP);
     const req = { get: () => otherIP, connection: { remoteAddress: blacklistedIP } };
     const res = { set: () => { } };
 
@@ -78,7 +78,7 @@ describe('blacklistIPs middleware', function root() {
   });
 
   it('should work with comma-separated lists as well', function test(done) {
-    sandbox.stub(process.env, 'IP_BLACKLIST', `127.127.127.0,${blacklistedIP}`);
+    sandbox.stub(process.env, 'IP_BLACKLIST').value(`127.127.127.0,${blacklistedIP}`);
     const req = { get: () => '', connection: { remoteAddress: `127.0.0.1,${blacklistedIP}` } };
     const res = { set: () => { } };
 
@@ -91,7 +91,7 @@ describe('blacklistIPs middleware', function root() {
   });
 
   it('should ignore empty values from lists', function test(done) {
-    sandbox.stub(process.env, 'IP_BLACKLIST', `,127.127.127.0,,${blacklistedIP}`);
+    sandbox.stub(process.env, 'IP_BLACKLIST').value(`,127.127.127.0,,${blacklistedIP}`);
     const req = { get: () => ',,', connection: { remoteAddress: `,127.0.0.1,,${blacklistedIP},` } };
     const res = { set: () => { } };
 

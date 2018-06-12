@@ -3,51 +3,21 @@
 
 const expect = require('chai').expect;
 const sinon = require('sinon');
-const i18n = require('@chauffeur-prive/i18n');
 const i18nMW = require('../../../src/middleware/i18n.js');
 
 describe('i18n middleware - i18n.js', function root() {
-  const translations = {
-    'en-US': {
-      'test-key': 'test-en'
-    },
-    'fr-FR': {
-      'test-key': 'test-fr'
-    }
-  };
-
   const body = {
     '@translate': {
       key: 'test-key',
     }
   };
+  const sandbox = sinon.sandbox.create();
 
-  before(function* before() {
-    yield i18n.engine.init();
-
-    i18n.engine.addTranslations('fr-FR', translations['fr-FR']);
-    i18n.engine.addTranslations('en-US', translations['en-US']);
+  afterEach(() => {
+    sandbox.restore();
   });
 
-  it('should correctly translate a body (fr)', function* test() {
-    const req = {
-      language: 'fr-FR'
-    };
-    const res = {
-      body,
-      json: sinon.spy()
-    };
-
-    const middleware = i18nMW();
-    expect(middleware).to.be.instanceof(Function);
-
-    yield middleware(req, res);
-
-    sinon.assert.called(res.json);
-    expect(res.body).to.equal('test-fr');
-  });
-
-  it('should correctly translate a body (en)', function* test() {
+  it('should throw an exception if i18n is not injected', function* test() {
     const req = {
       language: 'en-US'
     };
@@ -56,31 +26,18 @@ describe('i18n middleware - i18n.js', function root() {
       json: sinon.spy()
     };
 
-    const middleware = i18nMW();
-    expect(middleware).to.be.instanceof(Function);
-
-    yield middleware(req, res);
-
-    sinon.assert.called(res.json);
-    expect(res.body).to.equal('test-en');
-  });
-
-  it('should not translate a body if language is missing', function* test() {
-    const req = {
-      language: 'es-ES'
-    };
-    const res = {
-      body,
-      json: sinon.spy()
-    };
+    const next = sinon.spy();
 
     const middleware = i18nMW();
     expect(middleware).to.be.instanceof(Function);
 
-    yield middleware(req, res);
+    yield middleware(req, res, next);
 
-    sinon.assert.called(res.json);
-    expect(res.body).to.equal('test-key');
+    expect(next.args[0][0].message)
+      .to.deep.equal('Missing i18n dependency, i18n middleware should be initialized with a configured instance of i18n');
+    expect(next.callCount).to.equal(1);
+    expect(res.json.callCount).to.equal(0);
+    expect(res.body).to.deep.equal(body);
   });
 
   it('should not alter non body', function* test() {
@@ -94,13 +51,88 @@ describe('i18n middleware - i18n.js', function root() {
 
     const next = sinon.spy();
 
-    const middleware = i18nMW();
+    const i18n = {
+      translate: () => {}
+    };
+    sandbox.stub(i18n, 'translate').resolves('translated value');
+
+    const middleware = i18nMW(i18n);
     expect(middleware).to.be.instanceof(Function);
 
     yield middleware(req, res, next);
 
-    sinon.assert.called(next);
-    sinon.assert.notCalled(res.json);
+    expect(next.callCount).to.equal(1);
+    expect(res.json.callCount).to.equal(0);
     expect(res.body2).to.deep.equal(body);
+  });
+
+  it('should call translate successfully if i18n is passed as a generator and body exists', function* test() {
+    const req = {
+      language: 'fr-FR'
+    };
+    const res = {
+      body,
+      json: sinon.spy()
+    };
+    const next = sinon.spy();
+
+    const i18nObj = { obj: null, lang: null };
+    const i18n = {
+      translate: function *gen(obj, lang) {
+        i18nObj.obj = obj;
+        i18nObj.lang = lang;
+        return obj;
+      }
+    };
+
+    const middleware = i18nMW(i18n);
+    expect(middleware).to.be.instanceof(Function);
+
+    yield middleware(req, res);
+
+    expect(res.json.args).to.deep.equal([
+      [{
+        '@translate': {
+          key: 'test-key',
+        }
+      }]
+    ]);
+    expect(next.callCount).to.equal(0);
+    expect(res.body).to.deep.equal(body);
+    expect(i18nObj).to.deep.equal({
+      lang: 'fr-FR',
+      obj: {
+        '@translate': {
+          key: 'test-key'
+        }
+      }
+    });
+  });
+
+  it('should call translate successfully if i18n is passed as a promise and body exists', function* test() {
+    const req = {
+      language: 'fr-FR'
+    };
+    const res = {
+      body,
+      json: sinon.spy()
+    };
+    const next = sinon.spy();
+
+    const i18n = {
+      translate: () => {}
+    };
+    sandbox.stub(i18n, 'translate').resolves('translated value');
+
+    const middleware = i18nMW(i18n);
+    expect(middleware).to.be.instanceof(Function);
+
+    yield middleware(req, res);
+
+    expect(res.json.args).to.deep.equal([
+      ['translated value']
+    ]);
+    expect(next.callCount).to.equal(0);
+    expect(res.body).to.deep.equal('translated value');
   });
 });
