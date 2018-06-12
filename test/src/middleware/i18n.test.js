@@ -13,11 +13,11 @@ describe('i18n middleware - i18n.js', function root() {
   };
   const sandbox = sinon.sandbox.create();
 
-  after(() => {
+  afterEach(() => {
     sandbox.restore();
   });
 
-  it('should do nothing if i18n is falsey', function* test() {
+  it('should throw an exception if i18n is not injected', function* test() {
     const req = {
       language: 'en-US'
     };
@@ -33,6 +33,8 @@ describe('i18n middleware - i18n.js', function root() {
 
     yield middleware(req, res, next);
 
+    expect(next.args[0][0].message)
+      .to.deep.equal('Missing i18n dependency, i18n middleware should be initialized with a configured instance of i18n');
     expect(next.callCount).to.equal(1);
     expect(res.json.callCount).to.equal(0);
     expect(res.body).to.deep.equal(body);

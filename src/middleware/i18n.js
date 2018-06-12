@@ -24,9 +24,12 @@ function setup(i18n) {
    * @returns {void}
    */
   return wrap(function* middleware(req, res, next) {
-    if (res.body && i18n) {
-      res.body = yield i18n.translate(res.body, req.language);
+    if (!i18n) {
+      throw new Error('Missing i18n dependency, i18n middleware should be initialized with a configured instance of i18n');
+    }
 
+    if (res.body) {
+      res.body = yield i18n.translate(res.body, req.language);
       return res.json(res.body);
     }
 
