@@ -4,30 +4,39 @@ const parser = require('accept-language-parser');
 const _ = require('lodash');
 const { languageCodeExists } = require('country-language');
 
+const DEFAULT_LANGUAGE = 'en';
+
 module.exports = setup;
 
 /**
- * Find matching language by partial match.
+ * Intersect the list of user accept languages over the list of authorized languages
+ * and return the first matching language
  *
- * To match, the language must have the same country code.
+ * iterate over the ordered list of user accepted languages and:
+ *   1/ find exact match (country + region)
+ *   2/ find partial match (country code)
  *
- * @param   {Array} languages Array of known languages.
- * @param   {Array} parsedLanguages Array of parsed languages from Accept-Language.
+ * @param   {Array} authorizedLanguages Array of authorized/known languages.
+ * @param   {Array} userAcceptLanguages Array of parsed languages from Accept-Language.
  * @returns {String|null} The first matching language if found, null otherwise.
  */
-function findPartialLanguageMatch(languages, parsedLanguages) {
-  const languagesByCode = _.reduce(languages, (languagesResult, language) => {
-    const code = language.split('-')[0];
-    languagesResult[code] = language;
-    return languagesResult;
-  }, {});
+function findLanguageMatch(authorizedLanguages, userAcceptLanguages) {
+  for (const language of userAcceptLanguages) {
+    // find exact matching
+    const foundExactLanguage = _.find(authorizedLanguages, (lang) => {
+      return lang === `${language.code}-${language.region}`;
+    });
+    if (foundExactLanguage) return foundExactLanguage;
 
-  let matchingLanguage;
-  _.find(parsedLanguages, lang => {
-    if (languagesByCode[lang.code]) matchingLanguage = languagesByCode[lang.code];
-    return matchingLanguage;
-  });
-  return matchingLanguage || null;
+    // compare language country code only
+    const foundCountryCode = _.find(authorizedLanguages, (lang) => { // eslint-disable-line no-loop-func
+      const parsedLanguage = _.get(parser.parse(lang), '[0]');
+      return parsedLanguage.code === language.code;
+    });
+    if (foundCountryCode) return foundCountryCode;
+  }
+
+  return null;
 }
 
 /**
@@ -36,7 +45,7 @@ function findPartialLanguageMatch(languages, parsedLanguages) {
  * @param  {Object} opts.languages the languages list
  * @return {void}
  */
-function setup({ languages = [] } = {}) {
+function setup({ languages = [], defaultLanguage = DEFAULT_LANGUAGE } = {}) {
   if (!languages || !languages.length) {
     throw new Error('opts.languages is mandatory');
   }
@@ -52,16 +61,19 @@ function setup({ languages = [] } = {}) {
     const acceptLanguage = req.get('Accept-Language');
 
     if (!acceptLanguage) {
-      req.language = languages[0];
+      req.language = defaultLanguage;
       return next();
     }
 
+    // parse and order the locales by priority
     const parsedLanguages = parser.parse(acceptLanguage);
 
-    const validParsedLanguages = _.filter(parsedLanguages,
+    // validate languages
+    const userAcceptLanguages = _.filter(parsedLanguages,
                                           language => languageCodeExists(language.code));
 
-    const language = findPartialLanguageMatch(languages, validParsedLanguages) || languages[0];
+    // intersect user accept languages with the known languages list
+    const language = findLanguageMatch(languages, userAcceptLanguages) || defaultLanguage;
 
     req.language = language;
 
