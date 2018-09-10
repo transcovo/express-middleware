@@ -4,8 +4,8 @@ module.exports = setup;
 
 /**
  * Setup SSL redirect middleware
- * @param  {Object} opts the middleware options
- * @param  {Object} opts.disable true to disable redirection, false otherwise (default is process.env.DISABLE_SSL_REDIRECT)
+ * @param  {Object} [opts] the middleware options
+ * @param  {Object} [opts.disable] true to disable redirection, false otherwise (default is process.env.DISABLE_SSL_REDIRECT)
  * @return {void}
  */
 function setup(opts) {
