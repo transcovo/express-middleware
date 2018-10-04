@@ -1,5 +1,5 @@
 [![Coverage Status](https://coveralls.io/repos/github/transcovo/express-middleware/badge.svg?branch=master)](https://coveralls.io/github/transcovo/express-middleware?branch=master)
-[![Circle CI](https://circleci.com/gh/transcovo/express-middleware/tree/master.svg?style=svg&circle-token=97907b31816956c5736f058b30d8ef31ea0f0eaf)](https://circleci.com/gh/transcovo/express-middleware/tree/master)
+[![Circle CI](https://circleci.com/gh/transcovo/express-middleware/tree/master.svg?style=shield&circle-token=97907b31816956c5736f058b30d8ef31ea0f0eaf)](https://circleci.com/gh/transcovo/express-middleware/tree/master)
 
 ## Install
 
