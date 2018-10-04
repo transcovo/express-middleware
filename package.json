@@ -1,6 +1,6 @@
 {
   "name": "express-middleware",
-  "version": "3.1.1",
+  "version": "3.2.0",
   "description": "Set of middlewares for Chauffeur-Privé",
   "keywords": [
     "express",
@@ -16,22 +16,22 @@
     "http-errors": "1.5.1",
     "ipaddr.js": "1.2.0",
     "lodash": "4.17.5",
-    "morgan": "1.7.0",
+    "morgan": "1.9.1",
     "node-uuid": "1.4.7"
   },
   "devDependencies": {
     "chai": "~3.5.0",
-    "co-mocha": "~1.1.2",
-    "coveralls": "~2.11.6",
+    "co-mocha": "1.2.2",
+    "coveralls": "3.0.2",
     "eslint": "~1.10.3",
     "eslint-config-cp": "github:transcovo/eslint-config-cp#1.1.0",
     "express": "^4.14.0",
-    "istanbul": "~0.4.2",
     "is-path-in-cwd": "^2.0.0",
-    "mocha": "~2.4.5",
+    "istanbul": "~0.4.2",
+    "mocha": "5.2.0",
     "mocha-lcov-reporter": "~1.0.0",
     "sinon": "4.4.2",
-    "supertest": "^2.0.1"
+    "supertest": "3.3.0"
   },
   "scripts": {
     "test": "npm run lint && npm run coverage",
