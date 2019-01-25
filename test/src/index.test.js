@@ -1,8 +1,9 @@
 'use strict';
-/* eslint no-unused-expressions:0 */
 
-describe('module main file - index.js', function root() {
-  it('should call without error', function test() {
+/* eslint global-require:0 */
+
+describe('module main file - index.js', () => {
+  it('should call without error', () => {
     require('../../index');
   });
 });

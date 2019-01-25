@@ -1,14 +1,15 @@
 'use strict';
+
 /* eslint no-unused-expressions:0 */
 
-const expect = require('chai').expect;
+const { expect } = require('chai');
 const sinon = require('sinon');
 const i18nMW = require('../../../src/middleware/i18n.js');
 
-describe('i18n middleware - i18n.js', function root() {
+describe('i18n middleware - i18n.js', () => {
   const body = {
     '@translate': {
-      key: 'test-key',
+      key: 'test-key'
     }
   };
   const sandbox = sinon.sandbox.create();
@@ -33,8 +34,9 @@ describe('i18n middleware - i18n.js', function root() {
 
     yield middleware(req, res, next);
 
-    expect(next.args[0][0].message)
-      .to.deep.equal('Missing i18n dependency, i18n middleware should be initialized with a configured instance of i18n');
+    expect(next.args[0][0].message).to.deep.equal(
+      'Missing i18n dependency, i18n middleware should be initialized with a configured instance of i18n'
+    );
     expect(next.callCount).to.equal(1);
     expect(res.json.callCount).to.equal(0);
     expect(res.body).to.deep.equal(body);
@@ -78,7 +80,7 @@ describe('i18n middleware - i18n.js', function root() {
 
     const i18nObj = { obj: null, lang: null };
     const i18n = {
-      translate: function *gen(obj, lang) {
+      translate: (obj, lang) => {
         i18nObj.obj = obj;
         i18nObj.lang = lang;
         return obj;
@@ -91,11 +93,13 @@ describe('i18n middleware - i18n.js', function root() {
     yield middleware(req, res);
 
     expect(res.json.args).to.deep.equal([
-      [{
-        '@translate': {
-          key: 'test-key',
+      [
+        {
+          '@translate': {
+            key: 'test-key'
+          }
         }
-      }]
+      ]
     ]);
     expect(next.callCount).to.equal(0);
     expect(res.body).to.deep.equal(body);
@@ -129,9 +133,7 @@ describe('i18n middleware - i18n.js', function root() {
 
     yield middleware(req, res);
 
-    expect(res.json.args).to.deep.equal([
-      ['translated value']
-    ]);
+    expect(res.json.args).to.deep.equal([['translated value']]);
     expect(next.callCount).to.equal(0);
     expect(res.body).to.deep.equal('translated value');
   });

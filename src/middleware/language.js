@@ -23,13 +23,15 @@ module.exports = setup;
 function findLanguageMatch(authorizedLanguages, userAcceptLanguages) {
   for (const language of userAcceptLanguages) {
     // find exact matching
-    const foundExactLanguage = _.find(authorizedLanguages, (lang) => {
-      return lang === `${language.code}-${language.region}`;
-    });
+    const foundExactLanguage = _.find(
+      authorizedLanguages,
+      lang => lang === `${language.code}-${language.region}`
+    );
     if (foundExactLanguage) return foundExactLanguage;
 
     // compare language country code only
-    const foundCountryCode = _.find(authorizedLanguages, (lang) => { // eslint-disable-line no-loop-func
+    const foundCountryCode = _.find(authorizedLanguages, lang => {
+      // eslint-disable-line no-loop-func
       const parsedLanguage = _.get(parser.parse(lang), '[0]');
       return parsedLanguage.code === language.code;
     });
@@ -69,11 +71,13 @@ function setup({ languages = [], defaultLanguage = DEFAULT_LANGUAGE } = {}) {
     const parsedLanguages = parser.parse(acceptLanguage);
 
     // validate languages
-    const userAcceptLanguages = _.filter(parsedLanguages,
-                                          language => languageCodeExists(language.code));
+    const userAcceptLanguages = _.filter(parsedLanguages, language =>
+      languageCodeExists(language.code)
+    );
 
     // intersect user accept languages with the known languages list
-    const language = findLanguageMatch(languages, userAcceptLanguages) || defaultLanguage;
+    const language =
+      findLanguageMatch(languages, userAcceptLanguages) || defaultLanguage;
 
     req.language = language;
 

@@ -46,7 +46,12 @@ function parseIp(rawIP) {
  * @return {String}        rawIP
  */
 function extractIps(rawIPs) {
-  return rawIPs ? rawIPs.split(',').filter(_.identity).map(parseIp) : [];
+  return rawIPs
+    ? rawIPs
+        .split(',')
+        .filter(_.identity)
+        .map(parseIp)
+    : [];
 }
 
 /**
@@ -55,6 +60,7 @@ function extractIps(rawIPs) {
  * @return {String}        rawIPs
  */
 function getReqIPs(req) {
-  return extractIps(req.connection.remoteAddress)
-    .concat(extractIps(req.get('x-forwarded-for')));
+  return extractIps(req.connection.remoteAddress).concat(
+    extractIps(req.get('x-forwarded-for'))
+  );
 }

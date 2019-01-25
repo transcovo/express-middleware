@@ -1,21 +1,22 @@
 'use strict';
+
 /* eslint no-unused-expressions:0 */
 
-const expect = require('chai').expect;
+const { expect } = require('chai');
 const httpAccessLogger = require('../../../src/middleware/httpAccessLogger.js');
 
-describe('http access logger middleware - httpAccessLogger.js', function root() {
-  it('should work in normal mode', function test(done) {
+describe('http access logger middleware - httpAccessLogger.js', () => {
+  it('should work in normal mode', done => {
     const logger = { info: assertLog, level: () => 100 };
     const req = {
       logger,
-      headers: {}, // required by morgan
+      headers: {} // required by morgan
     };
 
     const middleware = httpAccessLogger(logger);
     expect(middleware).to.be.instanceof(Function);
 
-    middleware(req, { }, () => {});
+    middleware(req, {}, () => {});
 
     /**
      * Assert log result
@@ -30,7 +31,7 @@ describe('http access logger middleware - httpAccessLogger.js', function root() 
     }
   });
 
-  it('should work in debug mode with a request id and a token', function test(done) {
+  it('should work in debug mode with a request id and a token', done => {
     const tokenParts = [
       'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9',
       'eyJ1c2VyX2lkIjoiNTY3MmRmNDczMjZkZWNmNzA2OWZiZTlkIiwic3ViIjoiNTY3MmRmNDczMjZkZWNmNzA2OWZiZTlkIiwicm9sZXMiOlt7Im5hbWUiOiJjcDplbXBsb3llZTp0ZWNoOiJ9XSwiaXNzIjoiNTY3MmRmNDczMjZkZWNmNzA2OWZiZTlkIiwiZGlzcGxheV9uYW1lIjoieW9hbm4gZ290dGhpbGYiLCJpYXQiOjE0NjEwNzA1MzksImV4cCI6MTQ2MTI0MzMzOX0',
@@ -49,7 +50,7 @@ describe('http access logger middleware - httpAccessLogger.js', function root() 
     const middleware = httpAccessLogger(logger);
     expect(middleware).to.be.instanceof(Function);
 
-    middleware(req, { }, () => {});
+    middleware(req, {}, () => {});
 
     /**
      * Assert log result
@@ -60,20 +61,22 @@ describe('http access logger middleware - httpAccessLogger.js', function root() 
     function assertLog(data, message) {
       expect(data).to.be.instanceof(Object);
       expect(data['request-id']).to.equal(requestId);
-      expect(data.authorization).to.equal(`${tokenParts[0]}.${tokenParts[1]}.[...]`);
+      expect(data.authorization).to.equal(
+        `${tokenParts[0]}.${tokenParts[1]}.[...]`
+      );
       expect(message).to.equal('[Express] Http access');
       done();
     }
   });
 
-  describe('authorization morgan token - #authorizationToken', function desc() {
-    it('should return null when no jwt is provided', function test() {
+  describe('authorization morgan token - #authorizationToken', () => {
+    it('should return null when no jwt is provided', () => {
       const req = {};
       const auth = httpAccessLogger._authorizationToken(req);
       expect(auth).to.not.exist;
     });
 
-    it('should return null when format is unknown', function test() {
+    it('should return null when format is unknown', () => {
       const req = { token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9' };
       const auth = httpAccessLogger._authorizationToken(req);
       expect(auth).to.not.exist;

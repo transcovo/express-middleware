@@ -1,14 +1,13 @@
 'use strict';
-/* eslint no-unused-expressions:0 */
 
-const expect = require('chai').expect;
+const { expect } = require('chai');
 const sinon = require('sinon');
 const requestId = require('../../../src/middleware/requestId.js');
 
-describe('request id middleware - requestId.js', function root() {
-  it('should correctly created and called', function test(done) {
-    const req = { get: () => { } };
-    const res = { set: () => { } };
+describe('request id middleware - requestId.js', () => {
+  it('should correctly created and called', done => {
+    const req = { get: () => {} };
+    const res = { set: () => {} };
 
     const middleware = requestId();
     expect(middleware).to.be.instanceof(Function);
@@ -16,9 +15,9 @@ describe('request id middleware - requestId.js', function root() {
     middleware(req, res, done);
   });
 
-  it('should create an new id', function test() {
-    const req = { get: () => { } };
-    const res = { set: () => { } };
+  it('should create an new id', () => {
+    const req = { get: () => {} };
+    const res = { set: () => {} };
 
     const getSpy = sinon.spy(req, 'get');
     const setSpy = sinon.spy(res, 'set');
@@ -37,10 +36,10 @@ describe('request id middleware - requestId.js', function root() {
     expect(req.requestId).to.equal(args[1]);
   });
 
-  it('should concate a new id to the current x-request-id header', function test() {
+  it('should concate a new id to the current x-request-id header', () => {
     const currentReqId = '6ca66f56-dec4-45dd-9dd0-fd1fe6806b18';
     const req = { get: () => currentReqId };
-    const res = { set: () => { } };
+    const res = { set: () => {} };
 
     const getSpy = sinon.spy(req, 'get');
     const setSpy = sinon.spy(res, 'set');
@@ -54,7 +53,7 @@ describe('request id middleware - requestId.js', function root() {
     const args = setSpy.args[0];
     expect(args.length).to.equal(2);
     expect(args[0]).to.equal('x-request-id');
-    expect(args[1]).to.match(new RegExp(`^${currentReqId}\.[0-9a-f-]+$`));
+    expect(args[1]).to.match(new RegExp(`^${currentReqId}.[0-9a-f-]+$`));
 
     expect(req.requestId).to.equal(args[1]);
   });
