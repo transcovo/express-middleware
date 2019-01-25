@@ -11,10 +11,10 @@ setup._authorizationToken = authorizationToken; // for testing
 // // //
 
 /**
-  * Create a logger for http request Morgan-based.
-  * Morgan is a good tools to fetch request data (like duration, http version, ...), but it only streams string instead of Json.
-  * Then we don't use morgan stream and override morgan formatter to log Json request data.
-  *
+ * Create a logger for http request Morgan-based.
+ * Morgan is a good tools to fetch request data (like duration, http version, ...), but it only streams string instead of Json.
+ * Then we don't use morgan stream and override morgan formatter to log Json request data.
+ *
  * @param  {Object} opts Options
  * @param  {Object} opts.morgan See Morgan options
  * @param  {Function} opts.info  A function which return a method to log a message (by default Bunyan `req.logger` logger is used)
@@ -28,17 +28,24 @@ setup._authorizationToken = authorizationToken; // for testing
  * @see requestId.js
  */
 function setup(opts) {
-  const options = _.defaults({
-    morgan: {
-      stream: { write: () => { /* DO NOTHING */ } }
+  const options = _.defaults(
+    {
+      morgan: {
+        stream: {
+          write: () => {
+            /* DO NOTHING */
+          }
+        }
+      },
+      log: req => req.logger.info.bind(req.logger),
+      isDebug: req => req.logger.level() < bunyan.INFO,
+      tokens: {
+        'request-id': req => req.requestId,
+        authorization: authorizationToken
+      }
     },
-    log: req => req.logger.info.bind(req.logger),
-    isDebug: req => req.logger.level() < bunyan.INFO,
-    tokens: {
-      'request-id': req => req.requestId,
-      authorization: authorizationToken
-    }
-  }, opts);
+    opts
+  );
 
   // IDP jwt & request ID
   morgan.token('authorization', options.tokens.authorization);
@@ -86,7 +93,7 @@ function setup(opts) {
  * @return {String}     token without signature
  */
 function authorizationToken(req) {
-  const token = req.token;
+  const { token } = req;
   if (!token) return null;
 
   const parts = token.split('.');

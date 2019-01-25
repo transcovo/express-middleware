@@ -16,7 +16,7 @@ function setup() {
    * @param  {Function} next Express next handler
    * @returns {void}
    */
-  return function middleware(req, res, next) {
+  return (req, res, next) => {
     const header = req.get('authorization');
 
     if (req.query && req.query.token) {
@@ -31,6 +31,6 @@ function setup() {
         return next();
       }
     }
-    next();
+    return next();
   };
 }

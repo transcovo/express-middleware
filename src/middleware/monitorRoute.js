@@ -7,7 +7,7 @@ module.exports = setup;
 // // //
 
 const PATH_REPLACE_IDS = /(\/)([\da-f]{24}|([A-Z]{2}|[A-Z]\d|\d[A-Z])[1-9](\d{1,3})?|\d+)/g;
-const PATH_REPLACE_LONG = /(\/)(\d|[a-z]|[A-Z]|:|\.|-|_){16,}[^\/]*($|\/)/g;
+const PATH_REPLACE_LONG = /(\/)(\d|[a-z]|[A-Z]|:|\.|-|_){16,}[^/]*($|\/)/g;
 const PATH_SEPARATOR = /\/+/g;
 
 /**
@@ -22,8 +22,7 @@ function getRouteIdentifier(req) {
     .replace(PATH_REPLACE_IDS, '$1:id')
     .replace(PATH_REPLACE_LONG, '$1:possibleid$3')
     .replace(PATH_SEPARATOR, '_')
-    .substr(1)
-  ;
+    .substr(1);
 
   return `${protocol}.${method}.${path}`;
 }
@@ -47,7 +46,10 @@ function increment(metrics, req) {
  */
 function setup(metrics) {
   assert.ok(metrics, 'metrics is missing');
-  assert(typeof metrics.increment === 'function', 'Metrics must have a "increment" method');
+  assert(
+    typeof metrics.increment === 'function',
+    'Metrics must have a "increment" method'
+  );
 
   /**
    * The middleware

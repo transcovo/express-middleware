@@ -6,6 +6,7 @@
 ```sh
 npm i express-middleware --save
 ```
+
 ## Middlewares
 
 - **Available**: Request Id, Child logger, JWT Token and HTTP Access logger
@@ -14,6 +15,7 @@ npm i express-middleware --save
 ### SSL Redirect
 
 Force SSL redirection. Options object is optional. Two possibilities to disable redirection :
+
 - set environment variable DISABLE_SSL_REDIRECT to `true`
 - add `disable`to `true` in setup options.
 
@@ -50,7 +52,7 @@ app.use(childLogger(logger));
 
 Append the token from header or query param to the `req` object.
 
-Query param format is `token=<mytoken>` and header format is `Authorization: Bearer <mytoken>`.  
+Query param format is `token=<mytoken>` and header format is `Authorization: Bearer <mytoken>`.
 
 ```js
 const jwtToken = require('express-middleware').jwtToken;
@@ -97,6 +99,7 @@ app.use(i18n());
 ### IP Blacklisting
 
 Force IP address validation before accepting a request.
+
 - set environment variable IP_BLACKLIST to be a list of comma separated IP addresses
 
 ```js
@@ -105,7 +108,6 @@ app.use(ipBlacklist());
 ```
 
 **Middleware dependency** : _None_
-
 
 ## Contribute
 

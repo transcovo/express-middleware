@@ -14,7 +14,10 @@ module.exports = setup;
  */
 function setup(logger) {
   assert.ok(logger, 'Logger is missing');
-  assert(typeof logger.child === 'function', 'Logger must have a "child" method');
+  assert(
+    typeof logger.child === 'function',
+    'Logger must have a "child" method'
+  );
 
   /**
    * The middleware

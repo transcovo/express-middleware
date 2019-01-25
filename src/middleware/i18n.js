@@ -25,7 +25,9 @@ function setup(i18n) {
    */
   return wrap(function* middleware(req, res, next) {
     if (!i18n) {
-      throw new Error('Missing i18n dependency, i18n middleware should be initialized with a configured instance of i18n');
+      throw new Error(
+        'Missing i18n dependency, i18n middleware should be initialized with a configured instance of i18n'
+      );
     }
 
     if (res.body) {
