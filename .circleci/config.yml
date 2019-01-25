@@ -51,6 +51,23 @@ jobs:
       - store_artifacts:
           path: coverage
           prefix: coverage
+  build-10:
+    docker:
+      - image: 'circleci/node:10.13'
+    steps:
+      - checkout
+      - run:
+          name: install-dependencies
+          command: npm install
+      - run:
+          name: test
+          command: npm test
+      - run:
+          name: coverage
+          command: 'bash <(curl -s https://codecov.io/bash)'
+      - store_artifacts:
+          path: coverage
+          prefix: coverage
 workflows:
   version: 2
   build:
@@ -58,3 +75,4 @@ workflows:
       - build-6
       - build-7
       - build-8.10
+      - build-10
