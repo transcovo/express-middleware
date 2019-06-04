@@ -1,6 +1,6 @@
 {
   "name": "express-middleware",
-  "version": "3.4.0",
+  "version": "3.4.1",
   "description": "Set of middlewares for Chauffeur-Privé",
   "keywords": [
     "express",
