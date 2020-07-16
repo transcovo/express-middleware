@@ -16,7 +16,7 @@
     "country-language": "0.1.7",
     "http-errors": "1.5.1",
     "ipaddr.js": "1.2.0",
-    "lodash": "4.17.12",
+    "lodash": "4.17.19",
     "morgan": "1.9.1",
     "node-uuid": "1.4.7"
   },
